@@ -1,13 +1,37 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Marker</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
 </head>
+
 <body>
-    
+    <script>
+        Parse.initialize("123456", "123456");
+        Parse.serverURL = 'http://172.16.1.209:1337/parse'
+        var user = new Parse.User();
+        user.set("username", "mboss");
+        user.set("password", "04140906");
+        user.set("email", "mboss0@163.com");
+
+        // other fields can be set just like with Parse.Object
+        user.set("phone", "17608079673");
+
+        user.signUp(null, {
+            success: function (user) {
+                // Hooray! Let them use the app now.
+                console.dir(user)
+            },
+            error: function (user, error) {
+                // Show the error message somewhere and let the user try again.
+                alert("Error: " + error.code + " " + error.message);
+            }
+        });
+    </script>
 </body>
+
 </html>
