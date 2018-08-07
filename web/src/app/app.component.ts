@@ -23,9 +23,6 @@ export class AppComponent implements OnInit {
       Promise.resolve().then(() => {
         this.title = title;
       });
-      // setTimeout((() => {
-      //   this.title = title;
-      // }).bind(this), 10);
     });
   }
   private get showToolbar() {

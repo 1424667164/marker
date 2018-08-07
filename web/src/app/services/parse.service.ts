@@ -105,4 +105,13 @@ export class ProjectService implements OnDestroy {
   }
 }
 
+export declare interface ParseObject {
+  get?(attr: string);
+  set?(attr: string, obj: any);
+  has?(attr: string);
+  addUnique?(attr: string, item: any);
+  save?();
+  remove?(attr: string, item: any);
+}
+
 

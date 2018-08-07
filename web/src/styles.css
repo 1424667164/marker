@@ -13,6 +13,15 @@ html, body {
     padding: 0;
 }
 
+app-root {
+    height: 100%;
+    width: 100%;
+    display: block;
+    padding: 0;
+    margin: 0;
+}
+
+
 
 .mat-expansion-panel-body {
     padding: 12px 24px !important;

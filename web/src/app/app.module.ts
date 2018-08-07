@@ -15,7 +15,12 @@ import {
   MatButtonModule,
   MatListModule,
   MatExpansionModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatTabsModule,
+  MatCheckboxModule,
+  MatSelectModule,
+  MatCardModule,
+  MatChipsModule,
 } from '@angular/material/';
 import {MatIconModule} from '@angular/material/icon';
 import { ProjectComponent } from './home/project/project.component';
@@ -41,6 +46,11 @@ import { ProjectComponent } from './home/project/project.component';
     MatIconModule,
     MatExpansionModule,
     MatToolbarModule,
+    MatTabsModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    MatCardModule,
+    MatChipsModule,
     AppRoutingModule
   ],
   providers: [],

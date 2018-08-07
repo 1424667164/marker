@@ -1,3 +1,94 @@
-<p>
-  {{project.id}}
-</p>
+<div class="project" _ngcontent-c4>
+  <mat-tab-group>
+    <mat-tab label="标注" id="mark-image">
+      <ng-template matTabContent>
+        <div id="image-box" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)" (mousemove)="onMouseMove($event)">
+          <img [src]="currentImage" alt="">
+        </div>
+        <div id="tools">
+          <mat-select placeholder="选择类别" [(ngModel)]="currentType">
+            <mat-option *ngFor="let type of types, let i = index" [value]="i">
+              {{type}}
+            </mat-option>
+          </mat-select>
+          <button mat-flat-button>
+            <mat-icon aria-label="">chevron_left</mat-icon>
+          </button>
+          <button mat-flat-button>
+            <mat-icon aria-label="">chevron_right</mat-icon>
+          </button>
+
+          <span class="seperate"></span>
+
+          <button mat-flat-button>
+            <mat-icon aria-label="">check</mat-icon>
+          </button>
+          <button mat-flat-button>
+            <mat-icon aria-label="">close</mat-icon>
+          </button>
+
+          <mat-checkbox id="show-all" [(ngModel)]="showAll" color="primary">显示所有</mat-checkbox>
+        </div>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="配置" id="settings">
+      <ng-template matTabContent>
+          <mat-card class="content-card" id="image-list">
+            <mat-card-title>
+              图片列表
+            </mat-card-title>
+            <mat-card-content>
+              <mat-chip-list class="list-image">
+                <mat-chip *ngFor="let type of types; let i=index">{{i + ' ' + type}}
+                  <button mat-icon-button class="close" color="warn" (click)="removeType(type)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-chip>
+              </mat-chip-list>
+              <div id="add-image">
+                <mat-form-field>
+                  <input matInput placeholder="输入类别" [(ngModel)]="newType">
+                  <mat-hint align="start">请输入新的
+                    <strong>类别名称</strong>
+                  </mat-hint>
+                </mat-form-field>
+                <button mat-raised-button color="primary" (click)="addType()">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          <mat-card class="content-card" id="type-define">
+            <mat-card-title>
+              类别定义
+            </mat-card-title>
+            <mat-card-content>
+              <mat-chip-list class="list-type">
+                <mat-chip *ngFor="let type of types; let i=index">{{i + ' ' + type}}
+                  <button mat-icon-button class="close" color="warn" (click)="removeType(type)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-chip>
+              </mat-chip-list>
+              <div id="add-type">
+                <mat-form-field>
+                  <input matInput placeholder="输入类别" [(ngModel)]="newType">
+                  <mat-hint align="start">请输入新的
+                    <strong>类别名称</strong>
+                  </mat-hint>
+                </mat-form-field>
+                <button mat-raised-button color="primary" (click)="addType()">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="结果" id="results">
+      <ng-template matTabContent>
+        Content 3 - Loaded:
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>
