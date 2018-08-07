@@ -1,0 +1,34 @@
+
+
+.home .header {
+    padding: 24px;
+}
+.home .header button {
+    float: right;
+}
+.home .header .mat-expansion-panel .add-field {
+    margin-right: 12px !important;
+}
+
+.home .markers {
+    padding: 24px;
+}
+
+.home .project-item {
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.5s ease-in;
+}
+.home .project-item:hover {
+    box-shadow: 1px 1px 7px 0px;
+    transition: all 0.3s ease-out;
+}
+
+.home .project-item .indicator-right {
+    opacity: 0;
+    transition: all 0.3s ease-out;
+}
+.home .project-item:hover .indicator-right {
+    opacity: 0.8;
+    transition: all 0.5s ease-in;
+}

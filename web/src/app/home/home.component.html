@@ -1,0 +1,51 @@
+<div class="home">
+  <div class="header">
+    <!-- <button *ngIf="isAdmin && !adding" mat-mini-fab color="primary" (click)="adding=true">
+      <mat-icon aria-label="添加项目">add</mat-icon>
+    </button> -->
+    <mat-expansion-panel *ngIf="isAdmin">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          添加项目
+        </mat-panel-title>
+        <mat-panel-description>
+          新建标注项目
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <mat-form-field class="add-field">
+        <input matInput placeholder="项目名称" [(ngModel)]="project.name" [formControl]="nameFormControl" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="nameFormControl.hasError('required')">
+          必须填写
+          <strong>项目名称</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="add-field">
+        <input matInput placeholder="主目录" [(ngModel)]="project.root" [formControl]="rootFormControl" [errorStateMatcher]="matcher">
+        <mat-error *ngIf="rootFormControl.hasError('required')">
+          必须填写
+          <strong>主目录</strong>
+        </mat-error>
+        <mat-error *ngIf="rootFormControl.hasError('pattern')">
+            不符合目录格式
+          </mat-error>
+      </mat-form-field>
+      <button [disabled]="nameFormControl.invalid || rootFormControl.invalid" *ngIf="isAdmin" mat-stroked-button color="primary"
+        (click)="add()">
+        新建
+      </button>
+    </mat-expansion-panel>
+  </div>
+  <div class="markers">
+    <mat-list>
+      <h3 mat-subheader>标注项目</h3>
+      <mat-list-item *ngFor="let marker of markers" class="project-item" [routerLink]="['/', marker.id]">
+        <mat-icon mat-list-icon>folder</mat-icon>
+        <h4 mat-line>{{marker.name}}</h4>
+        <p mat-line> {{marker.updatedAt | date:"yyyy-MM-dd HH:mm"}} </p>
+        <mat-icon mat-list-icon-right color="primary" class="indicator-right">arrow_forward_ios</mat-icon>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</div>

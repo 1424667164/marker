@@ -1,0 +1,29 @@
+<div class="user">
+  <div class="signin">
+    <mat-form-field hintLabel="请输入用户名">
+      <input [(ngModel)]="user.name" matInput #input placeholder="用户名" [formControl]="usernameFormControl" [errorStateMatcher]="matcher">
+      <mat-error *ngIf="usernameFormControl.invalid">
+        必须填写
+        <strong>用户名</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field hintLabel="请输入密码">
+      <input [(ngModel)]="user.password" type="password" matInput #password placeholder="密码" [formControl]="passwordFormControl"
+        [errorStateMatcher]="matcher">
+        <mat-error *ngIf="passwordFormControl.hasError('required')">
+          必须填写
+          <strong>密码</strong>
+        </mat-error>
+        <mat-error *ngIf="passwordFormControl.hasError('minlength')">
+          长度不能小于
+          <strong>6</strong>
+        </mat-error>
+        <mat-error *ngIf="passwordFormControl.hasError('maxlength')">
+          长度不能大于
+          <strong>15</strong>
+        </mat-error>
+    </mat-form-field>
+    <button (click)="signup()" [disabled]="usernameFormControl.invalid || passwordFormControl.invalid" mat-stroked-button color="primary">注册</button>
+    <a class="router-link" routerLink="/user/signin">登录</a>
+  </div>
+</div>
