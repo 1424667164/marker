@@ -27,6 +27,10 @@ import {
 } from '@angular/material/';
 import {MatIconModule} from '@angular/material/icon';
 import { ProjectComponent } from './home/project/project.component';
+import { MarkComponent } from './home/project/mark/mark.component';
+import { SettingComponent } from './home/project/setting/setting.component';
+import { ResultComponent } from './home/project/result/result.component';
+import { JobComponent } from './home/project/job/job.component';
 
 
 @NgModule({
@@ -35,7 +39,11 @@ import { ProjectComponent } from './home/project/project.component';
     SigninComponent,
     SignupComponent,
     HomeComponent,
-    ProjectComponent
+    ProjectComponent,
+    MarkComponent,
+    SettingComponent,
+    ResultComponent,
+    JobComponent
   ],
   imports: [
     HttpClientModule,

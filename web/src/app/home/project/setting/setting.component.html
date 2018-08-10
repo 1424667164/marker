@@ -1,0 +1,68 @@
+<mat-card class="content-card" id="image-list">
+    <mat-card-title class="card-title">
+      <div id="images-buttons">
+        <button class="title-button" mat-flat-button (click)="currentImageSliceChange=-20" matTooltip="上一批">
+          <mat-icon aria-label="">chevron_left</mat-icon>
+        </button>
+        <button class="title-button" mat-flat-button (click)="currentImageSliceChange=20" matTooltip="下一批">
+          <mat-icon aria-label="">chevron_right</mat-icon>
+        </button>
+      </div>
+      <span>图片列表 {{images && ('[' + currentImageSlice + '~' + (currentImageSlice+20) + ']' + '/' + images.length)}}</span>
+    </mat-card-title>
+    <mat-card-content>
+      <mat-list class="list-image">
+        <!-- {{listedImages|async|json}} -->
+        <mat-list-item checkboxPosition="before" *ngFor="let image of listedImages | async; let i=index" (click)="currentPreview=image">
+            <mat-icon *ngIf="currentPreview==image" matListIcon>check</mat-icon>
+          <h4 mat-line>{{image.id}}</h4>
+          <p mat-line>{{(image.hide ? '已废弃' : '') + (image.marks && image.marks.length ? (' 已标注'+image.marks.length) : ' 未标注')}}</p>
+        </mat-list-item>
+      </mat-list>
+      <div class="list-action">
+        <div class="add-image" #preview id="preview" [ngStyle]="{'background-image': 'url('+ (currentPreview.url || '')+')'}">
+          <button *ngIf="currentPreview.url && (!currentPreview.marks || !currentPreview.marks.length)" mat-flat-button class="close"
+            color="warn" (click)="removeImage(currentPreview)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <div class="add-image">
+          <input type="file" accept="application/zip" placeholder="选择图片" #zip (change)="onFileChangeZip(zip.files)" [(ngModel)]="newZipPath">
+          <button mat-raised-button color="primary" (click)="addImages()" matTooltip="批量上传图片">
+            <mat-icon>archive_outline</mat-icon>
+          </button>
+        </div>
+        <div class="add-image">
+          <input type="file" accept="image/jpeg,image/jpg,image/png" placeholder="选择图片" #file (change)="onFileChange(file.files)" [(ngModel)]="newImagePath">
+          <button mat-raised-button color="primary" (click)="addImage()" matTooltip="上传图片">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="content-card" id="type-define">
+    <mat-card-title>
+      类别定义
+    </mat-card-title>
+    <mat-card-content>
+      <mat-chip-list class="list-type">
+        <mat-chip *ngFor="let type of types; let i=index">{{i + ' ' + type}}
+          <button mat-icon-button class="close" color="warn" (click)="removeType(type)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-chip>
+      </mat-chip-list>
+      <div id="add-type">
+        <mat-form-field>
+          <input matInput placeholder="输入类别" [(ngModel)]="newType">
+          <mat-hint align="start">请输入新的
+            <strong>类别名称</strong>
+          </mat-hint>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="addType()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>

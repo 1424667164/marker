@@ -4,6 +4,26 @@
     display: block;
     width: 100%;
     overflow: hidden;
+    .top-menu {
+        display: flex;
+        padding: 0;
+        justify-content: center;
+        height: 48px;
+        .mat-list-item {
+            min-width: 80px;
+            transition: all 0.2s ease-in;
+            background-color: transparent;
+            color: #333;
+            &.active {
+                background-color: #4a60db;
+                color: #FFF;
+                transition: all 0.2s ease-out;
+            }
+            ::ng-deep .mat-list-item-content {
+                justify-content: center;
+            }
+        }
+    }
 }
 
 .project {
@@ -167,7 +187,24 @@
 }
 
 #image-list {
-    .mat-card-content {
+    .card-title {
+        display: flex;
+        justify-content: space-between;
+        #images-buttons {
+            margin-right: auto;
+            .title-button {
+                width: 36px;
+                min-width: 0;
+                background: #fff;
+                color: #333;
+                text-align: center;
+                padding: 0;
+                margin: 0 3px;
+            }
+        }
+        & > span {
+            flex-grow: 2;
+        }
     }
     .list-image {
         flex-grow: 2;

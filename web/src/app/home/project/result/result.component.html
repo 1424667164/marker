@@ -1,0 +1,13 @@
+<mat-card class="content-card" id="results">
+    <mat-card-title>
+      <span>结果生成</span>
+      <button mat-flat-button class="generate" color="primary" (click)="generateResult()">
+        <mat-icon>file_copy</mat-icon>
+      </button>
+    </mat-card-title>
+    <mat-card-content class="result-content">
+      <!-- <mat-form-field floatLabel="never"> -->
+      <textarea readonly placeholder="此处显示结果..." [value]="resultString"></textarea>
+      <!-- </mat-form-field> -->
+    </mat-card-content>
+  </mat-card>
