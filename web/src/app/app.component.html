@@ -1,0 +1,15 @@
+<!--The content below is only a placeholder and can be replaced.-->
+
+<mat-toolbar color="primary" *ngIf="showToolbar">
+    <mat-toolbar-row>
+        <span>样本标注</span>
+        <span class="project-name" (click)="router.navigate([''])">项目列表</span>
+        <span class="project-letter" *ngIf="hasTitle">/</span>
+        <span class="project-name" *ngIf="hasTitle">{{title}}</span>
+        <span class="example-spacer"></span>
+        <button mat-icon-button color="default" (click)="logout()">
+            <mat-icon aria-label="logout">power_settings_new</mat-icon>
+        </button>
+    </mat-toolbar-row>
+</mat-toolbar>
+<router-outlet></router-outlet>

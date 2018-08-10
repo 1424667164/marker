@@ -1,0 +1,133 @@
+<div class="project" _ngcontent-c4>
+  <mat-tab-group>
+    <mat-tab label="标注" id="mark-image">
+      <ng-template matTabContent>
+        <div id="image-box" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)" (mousemove)="onMouseMove($event)">
+          <img [src]="currentImage.url || ''" alt="" />
+          <span *ngIf="currentImage.hide" class="image-indicator">{{'已废弃'}}</span>
+          <span class="image-indicator bottom">{{'#' + currentImageIndex + ' ' + (currentImage.marks ? '已标注' + currentImage.marks.length + '个' : '未标注')}}</span>
+        </div>
+        <div id="overlay" [ngClass]="{'capture-moving':bboxs.capture}">
+          <span class="rect" [ngStyle]="currentRectStyle"></span>
+          <div class="rect" *ngFor="let rectStyle of allRectStyle" [ngStyle]="rectStyle">
+            <span *ngIf="!rectStyle.tmp" class="type-label">{{types[rectStyle.rect.label]}}</span>
+            <button mat-icon-button (click)="removeMark(rectStyle)" matTooltip="删除标定">
+              <mat-icon aria-label="">close</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div id="tools">
+          <mat-select matTooltip="选择你要标注的目标类别" placeholder="选择类别" [(ngModel)]="currentType">
+            <mat-option *ngFor="let type of types, let i = index" [value]="i">
+              {{type}}
+            </mat-option>
+          </mat-select>
+          <mat-select matTooltip="按条件筛选图片" class="right-auto" placeholder="显示筛选" [(ngModel)]="currentFilter">
+            <mat-option *ngFor="let filter of ImageFilters" [value]="filter.type">
+              {{filter.name}}
+            </mat-option>
+          </mat-select>
+          <button mat-flat-button (click)="pre($event)" matTooltip="上一张">
+            <mat-icon aria-label="">chevron_left</mat-icon>
+          </button>
+          <button mat-flat-button (click)="next($event)" matTooltip="下一张">
+            <mat-icon aria-label="">chevron_right</mat-icon>
+          </button>
+
+          <span class="seperate"></span>
+          <span class="seperate"></span>
+
+          <button mat-flat-button matTooltip="保存标记">
+            <mat-icon aria-label="" (click)="mark()">check</mat-icon>
+          </button>
+          <button class="left-auto" (click)="hide()" mat-flat-button [matTooltip]="currentImage.hide ? '恢复图片' : '废弃图片'">
+            <mat-icon aria-label="">{{currentImage.hide ? 'refresh' : 'close'}}</mat-icon>
+          </button>
+
+          <span class="seperate"></span>
+          <!-- <mat-checkbox matTooltip="显示所有图片" class="check-box" id="show-all" [(ngModel)]="showAll" color="primary">显示</mat-checkbox> -->
+          <mat-checkbox matTooltip="标注框是否可选装" class="check-box" id="can-rotate" [(ngModel)]="canRotate" color="primary">旋转</mat-checkbox>
+        </div>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="配置" id="settings">
+      <ng-template matTabContent>
+        <mat-card class="content-card" id="image-list">
+          <mat-card-title>
+            图片列表 {{images && images.length}}
+          </mat-card-title>
+          <mat-card-content>
+            <mat-list class="list-image">
+              <mat-list-item *ngFor="let image of images|slice:0:50; let i=index" (click)="currentPreview=image">
+                <h4 mat-line>{{image.id}}</h4>
+                <p mat-line>{{(image.hide ? '已废弃' : '') + (image.marks && image.marks.length ? (' 已标注'+image.marks.length) : ' 未标注')}}</p>
+              </mat-list-item>
+            </mat-list>
+            <div class="list-action">
+              <div class="add-image" #preview id="preview" [ngStyle]="{'background-image': 'url('+ (currentPreview.url || '')+')'}">
+                <button *ngIf="currentPreview.url && (!currentPreview.marks || !currentPreview.marks.length)" mat-flat-button class="close"
+                  color="warn" (click)="removeImage(currentPreview)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              <div class="add-image">
+                <input type="file" accept="application/zip" placeholder="选择图片" #zip (change)="onFileChangeZip(zip.files)" [(ngModel)]="newZipPath">
+                <button mat-raised-button color="primary" (click)="addImages()" matTooltip="批量上传图片">
+                  <mat-icon>archive_outline</mat-icon>
+                </button>
+              </div>
+              <div class="add-image">
+                <input type="file" accept="image/jpeg,image/jpg,image/png" placeholder="选择图片" #file (change)="onFileChange(file.files)" [(ngModel)]="newImagePath">
+                <button mat-raised-button color="primary" (click)="addImage()" matTooltip="上传图片">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="content-card" id="type-define">
+          <mat-card-title>
+            类别定义
+          </mat-card-title>
+          <mat-card-content>
+            <mat-chip-list class="list-type">
+              <mat-chip *ngFor="let type of types; let i=index">{{i + ' ' + type}}
+                <button mat-icon-button class="close" color="warn" (click)="removeType(type)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-list>
+            <div id="add-type">
+              <mat-form-field>
+                <input matInput placeholder="输入类别" [(ngModel)]="newType">
+                <mat-hint align="start">请输入新的
+                  <strong>类别名称</strong>
+                </mat-hint>
+              </mat-form-field>
+              <button mat-raised-button color="primary" (click)="addType()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="结果">
+      <ng-template matTabContent>
+        <mat-card class="content-card" id="results">
+          <mat-card-title>
+            <span>结果生成</span>
+            <button mat-flat-button class="generate" color="primary" (click)="generateResult()">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+          </mat-card-title>
+          <mat-card-content class="result-content">
+            <!-- <mat-form-field floatLabel="never"> -->
+              <textarea readonly placeholder="此处显示结果..." [value]="resultString"></textarea>
+            <!-- </mat-form-field> -->
+          </mat-card-content>
+        </mat-card>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>
