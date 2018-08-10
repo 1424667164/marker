@@ -28,14 +28,60 @@
     left: 0;
     right: 0;
     bottom: 44px;
-    /* background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center; */
+    img {
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+    .image-indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 4px 12px;
+        color: white;
+        font-weight: bold;
+        background: #fd0000;
+        &.bottom {
+            background: #64b94b;
+            top: auto;
+            bottom: 0;
+        }
+    }
 }
-#image-box img {
-    width: 100%;
-    height: 100%;
+#overlay {
+    position: absolute;
+    top: 0;
+    bottom: 44px;
+    left: 0;
+    right: 0;
     pointer-events: none;
+    .rect {
+        position: absolute;
+        border: 3px solid #00F;
+        background: rgba(51, 51, 51, 0.027);
+        button {
+            float: right;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            color: #FFF;
+            background-color: #F00;
+            border-radius: 0;
+            opacity: 0.8;
+            pointer-events: all;
+            ::ng-deep .mat-button-wrapper .mat-icon {
+                line-height: 22px;
+            }
+        }
+        .type-label {
+            float: left;
+            background: #00f;
+            color: #FFF;
+        }
+    }
+    &.capture-moving * {
+        pointer-events: none !important;
+    }
 }
 #tools {
     position: absolute;
@@ -49,44 +95,50 @@
     align-items: center;
     justify-content: center;
     flex-wrap: nowrap;
-}
-#tools > * {
-    margin: 0 3px;
-}
-#tools .mat-select {
-    max-width: 120px;
-    height: 32px;
-    line-height: 32px;
-    background: #FFF;
-    margin-right: auto !important;
-}
-:host ::ng-deep .mat-select-value {
-    text-align: center;
+    * {
+        margin: 0 3px;
+    }
+    .mat-select {
+        max-width: 120px;
+        height: 32px;
+        line-height: 32px;
+        background: #FFF;
+    }
+    .mat-flat-button {
+        min-width: 32px;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        padding: 0;
+        background: #FFF;
+        color: #333;
+        text-align: center;
+    }
+    > *.left-auto {
+        margin-left: auto !important;
+    }
+    > *.right-auto {
+        margin-right: auto !important;
+    }
+    .seperate {
+        padding: 0 6px;
+    }
 }
 .mat-option {
     height: 32px !important;
     line-height: 32px !important;
     text-align: center;
 }
-#tools .mat-flat-button {
-    min-width: 32px;
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-    padding: 0;
-    background: #FFF;
-    color: #333;
+
+:host ::ng-deep .mat-select-value {
     text-align: center;
 }
-#show-all {
+
+.check-box {
     color: #FFF;
-    margin-left: auto !important;
 }
 :host ::ng-deep .mat-checkbox-frame {
     border-color: rgba(255,255,255,.84);
-}
-.seperate {
-    padding: 0 10px;
 }
 
 :host ::ng-deep .mat-tab-body-content{
@@ -115,33 +167,74 @@
 }
 
 #image-list {
+    .mat-card-content {
+    }
     .list-image {
         flex-grow: 2;
-        min-height: 120px;
-        padding: 0 16px 0 0;
+        max-height: 320px;
+        height: 320px;
+        padding: 2px 4pxx;
+        overflow-x: hidden;
+        overflow-y: auto;
+        margin-right: 16px;
     }
-    .list-image .mat-chip .close {
-        opacity: 0;
-        pointer-events: none;
-        position: absolute;
-        left: 0;
-        background: #fff;
-        right: 0;
-        width: 100%;
+    .list-action {
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
     }
-    .list-image .mat-chip:hover {
-        box-shadow: 0px 0px 7px 0px;
+    .list-image .mat-list-item {
+        // max-width: 100%;
+        // max-height: 32px;
+        // padding: 3px 8px;
+        // word-break: break-word;
+        // white-space: nowrap;
+        // text-overflow: ellipsis;
+        // overflow: hidden;
+        // margin: 2px 0;
+        // text-overflow:ellipsis;
+        text-align: left;
+        height: 48px;
+        cursor: pointer;
+        transition: all 0.18s ease-in-out;
     }
-    .list-image .mat-chip:hover .close {
-        opacity: 1;
-        pointer-events: all;
+    .list-image .mat-list-item:hover {
+        // box-shadow: 0px 0px 7px 0px;
+        background-color: #6e7497;
     }
-    #add-image {
+    .add-image {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
+        margin-top: 12px;
     }
-    #add-image button {
+    .add-image#preview {
+        flex-grow: 2;
+        min-height: 96px;
+        margin-top: 0px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+        position: relative;
+        .close {
+            position: absolute;
+            background: #fb0000;
+            right: 0;
+            top: 0;
+            color: #FFF;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            min-width: 0;
+            padding: 0;
+            text-align: center;
+            margin: 0;
+        }
+    }
+    .add-image input {
+        max-width: 180px;
+    }
+    .add-image button {
         margin-top: 16px;
     }
 }
@@ -175,6 +268,39 @@
     }
     #add-type button {
         margin-top: 16px;
+    }
+}
+
+#results {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-bottom: 0;
+    .mat-card-title {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        * {
+            margin-left: auto;
+        }
+        .generate {
+            width: 48px;
+            height: 48px;
+            line-height: 48px;
+            background: #333;
+            min-width: 0;
+            padding: 0;
+        }
+    }
+    .result-content {
+        flex-grow: 2;
+        textarea {
+            width: 100%;
+            min-height: 320px;
+            resize: none;
+            border: none;
+            outline: none;
+        }
     }
 }
 

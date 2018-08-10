@@ -1,3 +1,5 @@
 node_modules
 logs
 web/node_modules
+data
+web/package-lock.json

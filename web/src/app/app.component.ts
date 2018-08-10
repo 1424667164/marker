@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Parse } from './services/parse.service';
 import { PublicService } from './services/public.service';
@@ -8,7 +8,7 @@ import { PublicService } from './services/public.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   private title = '';
   private get hasTitle() {
     return this.title !== '';
@@ -25,6 +25,9 @@ export class AppComponent implements OnInit {
       });
     });
   }
+  ngAfterViewInit() {
+    this.setSize();
+  }
   private get showToolbar() {
     return !!Parse.User.current();
   }
@@ -35,5 +38,18 @@ export class AppComponent implements OnInit {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  setSize() {
+    let w = document.body.clientWidth;
+    let h = document.body.clientHeight;
+    if (w > 1024) {
+      if (w / 2 > h) {
+        w = 2 * h;
+      } else {
+        w = 1024;
+      }
+    }
+    document.body.style.width = w + 'px';
   }
 }

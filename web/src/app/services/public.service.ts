@@ -51,3 +51,22 @@ export class CustomErrorStateMatcher implements ErrorStateMatcher {
   }
 
 }
+
+export namespace Type {
+  export class Point {
+    x = 0;
+    y = 0;
+  }
+  export enum FilterTypes {
+    Normal = 0,
+    Pure,
+    UnMarked,
+    Marked,
+    Hided,
+    All
+  }
+  export declare class ImageFilter {
+    type?: FilterTypes;
+    name?: String;
+  }
+}

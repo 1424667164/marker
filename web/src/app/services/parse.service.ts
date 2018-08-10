@@ -1,13 +1,18 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import * as Parse_ from 'parse';
+
+const APP_ID = '123456';
+const FILE_KEY = '123456';
+const MASTER_KEY = '123456';
 
 /*************
  *
  * 初始化 Parse
  *
  * ***********/
-Parse_.initialize('123456', '123456', '123456');
+Parse_.initialize(APP_ID, MASTER_KEY, FILE_KEY);
 Parse_.serverURL = 'http://172.16.1.209:1337/parse';
 try {
   // let wallPost = new Parse_.Object("project");
@@ -22,6 +27,46 @@ try {
   console.error(err);
 }
 export const Parse = Parse_;
+
+/*************
+ *
+ * ParseService
+ *
+ * ***********/
+@Injectable({
+  providedIn: 'root'
+})
+export class ParseService {
+
+  constructor(private http: HttpClient) {
+
+  }
+  async deleteFile(url) {
+    if (!url) {
+      return false;
+    }
+    try {
+      let res = await Parse.Cloud.run("deleteFile", {url});
+      return res;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+  async unzipFiles(url) {
+    if (!url) {
+      return false;
+    }
+    try {
+      let res = await Parse.Cloud.run("unzipFiles", {url});
+      return res;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+
+}
 
 /*************
  *

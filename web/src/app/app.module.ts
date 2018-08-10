@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -21,6 +22,8 @@ import {
   MatSelectModule,
   MatCardModule,
   MatChipsModule,
+  MatTooltipModule,
+  MatSnackBarModule
 } from '@angular/material/';
 import {MatIconModule} from '@angular/material/icon';
 import { ProjectComponent } from './home/project/project.component';
@@ -35,6 +38,7 @@ import { ProjectComponent } from './home/project/project.component';
     ProjectComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
@@ -51,6 +55,8 @@ import { ProjectComponent } from './home/project/project.component';
     MatSelectModule,
     MatCardModule,
     MatChipsModule,
+    MatTooltipModule,
+    MatSnackBarModule,
     AppRoutingModule
   ],
   providers: [],
