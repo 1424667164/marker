@@ -37,3 +37,7 @@ app-root {
 .mat-expansion-panel-body {
     padding: 12px 24px !important;
 }
+
+.panel-nopadding .mat-dialog-container {
+    padding: 0;
+}

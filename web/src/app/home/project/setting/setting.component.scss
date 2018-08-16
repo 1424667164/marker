@@ -1,4 +1,10 @@
-
+:host {
+    padding: 25px;
+    width: 100%;
+    height: calc(100% - 48px);
+    display: flex;
+    flex-direction: column;
+}
 .mat-option {
     height: 32px !important;
     line-height: 32px !important;
@@ -136,6 +142,7 @@
         flex-grow: 2;
         min-height: 120px;
         padding: 0 16px 0 0;
+        outline: none;
     }
     .list-type .mat-chip .close {
         opacity: 0;

@@ -37,11 +37,12 @@ export class SignupComponent implements OnInit {
     user.set('username', this.user.name);
     user.set('password', this.user.password);
     try {
-      let res = await user.signUp();
-      console.dir(res);
-      res = await Parse.User.logIn(that.user.name, that.user.password);
-      console.dir(res);
-      this.router.navigate([this.publicService.redirectUrl]);
+      await user.signUp(null);
+      setTimeout(async () => {
+        let res = await Parse.Cloud.run("setRole", { name: this.user.name, role: 'default' });
+        res = await Parse.User.logIn(that.user.name, that.user.password);
+        this.router.navigate([this.publicService.redirectUrl]);
+      }, 300);
     } catch (e) {
       console.error(e);
     }

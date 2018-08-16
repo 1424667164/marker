@@ -5,3 +5,4 @@ files
 web/node_modules
 data
 web/package-lock.json
+**/*.log

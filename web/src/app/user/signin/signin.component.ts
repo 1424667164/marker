@@ -36,7 +36,6 @@ export class SigninComponent implements OnInit {
   async signin() {
     try {
       let res = await Parse.User.logIn(this.user.name, this.user.password);
-      console.dir(res);
       this.router.navigate([this.publicService.redirectUrl]);
     } catch (e) {
       console.error(e);

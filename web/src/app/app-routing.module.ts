@@ -1,29 +1,56 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { LoginGuardService } from './services/guard.service';
+import { LoginGuardService, ProjectResolver, adminGuardService, AdminResolver, JobResolver } from './services/guard.service';
 
 import { SignupComponent } from './user/signup/signup.component';
 import { SigninComponent } from './user/signin/signin.component';
 import { HomeComponent } from './home/home.component';
 import { ProjectComponent } from './home/project/project.component';
-import { MarkComponent } from './home/project/mark/mark.component';
 import { SettingComponent } from './home/project/setting/setting.component';
-import { ResultComponent } from './home/project/result/result.component';
 import { JobComponent } from './home/project/job/job.component';
+import { JobsComponent } from './home/jobs/jobs.component';
+import { ResultComponent } from './home/jobs/result/result.component';
+import { MarkComponent } from './home/jobs/mark/mark.component';
 
 const routes: Routes = [
   {
-    path: '', canActivate: [LoginGuardService],
-    children: [
-      { path: '', component: HomeComponent },
+    path: '', canActivate: [LoginGuardService], canActivateChild: [LoginGuardService], children: [
       {
-        path: ':id', component: ProjectComponent,
+        path: '', component: HomeComponent,
+        resolve: {
+          isAdmin: AdminResolver
+        }
+      },
+      {
+        path: 'project/:id', component: ProjectComponent,
+        canActivate: [adminGuardService], canActivateChild: [adminGuardService],
         children: [
-          { path: '', component: MarkComponent, data: { index: 0 } },
-          { path: 'setting', component: SettingComponent, data: { index: 1 } },
-          { path: 'result', component: ResultComponent, data: { index: 2 } },
-          { path: 'job', component: JobComponent, data: { index: 3 } },
+          { path: '', redirectTo: 'setting', pathMatch: 'full' },
+          {
+            path: 'setting', component: SettingComponent,
+            data: { index: 0 },
+            resolve: {
+              project: ProjectResolver
+            }
+          },
+          {
+            path: 'job', component: JobComponent, data: { index: 1 },
+            resolve: {
+              project: ProjectResolver
+            }
+          },
+        ]
+      },
+      {
+        path: 'job/:id', component: JobsComponent, children: [
+          { path: '', redirectTo: 'mark', pathMatch: 'full' },
+          {
+            path: 'mark', component: MarkComponent, data: { index: 0 }, resolve: {
+              job: JobResolver
+            }
+          },
+          { path: 'result', component: ResultComponent, data: { index: 1 }, resolve: { job: JobResolver } }
         ]
       }
     ]
@@ -39,6 +66,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [JobResolver, ProjectResolver, AdminResolver]
 })
 export class AppRoutingModule { }

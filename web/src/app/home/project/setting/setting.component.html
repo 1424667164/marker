@@ -16,11 +16,11 @@
         <mat-list-item checkboxPosition="before" *ngFor="let image of listedImages | async; let i=index" (click)="currentPreview=image">
             <mat-icon *ngIf="currentPreview==image" matListIcon>check</mat-icon>
           <h4 mat-line>{{image.id}}</h4>
-          <p mat-line>{{(image.hide ? '已废弃' : '') + (image.marks && image.marks.length ? (' 已标注'+image.marks.length) : ' 未标注')}}</p>
+          <p mat-line>{{(image.marks && image.marks.length ? (' 已标注'+image.marks.length) : ' 未标注') + '  ' + (image.width + 'x' + image.height)}}</p>
         </mat-list-item>
       </mat-list>
       <div class="list-action">
-        <div class="add-image" #preview id="preview" [ngStyle]="{'background-image': 'url('+ (currentPreview.url || '')+')'}">
+        <div class="add-image" #preview id="preview" [ngStyle]="{'background-image': currentPreview.url ? ('url('+ (currentPreview.url || '')+')') : ''}">
           <button *ngIf="currentPreview.url && (!currentPreview.marks || !currentPreview.marks.length)" mat-flat-button class="close"
             color="warn" (click)="removeImage(currentPreview)">
             <mat-icon>close</mat-icon>
@@ -55,12 +55,16 @@
       </mat-chip-list>
       <div id="add-type">
         <mat-form-field>
-          <input matInput placeholder="输入类别" [(ngModel)]="newType">
+          <input matInput placeholder="输入类别"  [formControl]="typeFormControl" checkAdmin>
           <mat-hint align="start">请输入新的
             <strong>类别名称</strong>
           </mat-hint>
+          <mat-error *ngIf="typeFormControl.hasError('notAdmin')">
+            非管理员权限
+            <strong>不能</strong>操作
+          </mat-error>
         </mat-form-field>
-        <button mat-raised-button color="primary" (click)="addType()">
+        <button [disabled]="typeFormControl.invalid" mat-raised-button color="primary" (click)="addType()">
           <mat-icon>add</mat-icon>
         </button>
       </div>

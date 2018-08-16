@@ -1,0 +1,43 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden;
+}
+:host > * {
+    max-width: 100%;
+    outline: none;
+}
+.mat-selection-list {
+    padding: 8px;
+    max-height: 360px;
+    overflow-y: auto;
+}
+.header {
+    box-shadow: 0 1px 3px 1px #bbb;
+    padding: 12px;
+    background: #EEE;
+    width: 100%;
+    font-size: 16px;
+    text-align: left;
+}
+.header span {
+    float: right;
+    font-size: 12px;
+}
+.footer {
+    width: 100%;
+    display: block;
+    box-shadow: 0 -1px 3px 1px #bbb;
+    padding: 12px 0;
+    background: #EEE;
+}
+.footer .mat-checkbox {
+    float: left;
+    line-height: 36px;
+    margin-left: 23px;
+}
+.footer button {
+    float: right;
+}

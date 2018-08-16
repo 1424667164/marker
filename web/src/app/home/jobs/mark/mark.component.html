@@ -1,7 +1,7 @@
 <div id="image-box" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)" (mousemove)="onMouseMove($event)">
-  <img [src]="currentImage.url || ''" alt="" />
-  <span *ngIf="currentImage.hide" class="image-indicator">{{'已废弃'}}</span>
-  <span class="image-indicator bottom">{{'#' + currentImageIndex + ' ' + (currentImage.marks ? '已标注' + currentImage.marks.length + '个' : '未标注')}}</span>
+  <img [src]="currentMark.url || ''" alt="" />
+  <span *ngIf="currentMark.hide" class="image-indicator">{{'已废弃'}}</span>
+  <span class="image-indicator bottom">{{'#' + currentMarkIndex + ' ' + (currentMark.bboxes ? '已标注' + currentMark.bboxes.length + '个' : '未标注')}}</span>
 </div>
 <div id="overlay" [ngClass]="{'capture-moving':bboxs.capture}">
   <span class="rect" [ngStyle]="currentRectStyle"></span>
@@ -19,7 +19,7 @@
     </mat-option>
   </mat-select>
   <mat-select matTooltip="按条件筛选图片" class="right-auto" placeholder="显示筛选" [(ngModel)]="currentFilter">
-    <mat-option *ngFor="let filter of ImageFilters" [value]="filter.type">
+    <mat-option *ngFor="let filter of MarkFilters" [value]="filter.type">
       {{filter.name}}
     </mat-option>
   </mat-select>
@@ -36,8 +36,9 @@
   <button mat-flat-button matTooltip="保存标记">
     <mat-icon aria-label="" (click)="mark()">check</mat-icon>
   </button>
-  <button class="left-auto" (click)="hide()" mat-flat-button [matTooltip]="currentImage.hide ? '恢复图片' : '废弃图片'">
-    <mat-icon aria-label="">{{currentImage.hide ? 'refresh' : 'close'}}</mat-icon>
+  <button class="left-auto" (click)="hide()" mat-flat-button [matTooltip]="currentMark.hide ? '恢复图片' : '废弃图片'">
+    <mat-icon aria-label="" *ngIf="currentMark.hide">refresh</mat-icon>
+    <mat-icon aria-label="" *ngIf="!currentMark.hide">close</mat-icon>
   </button>
 
   <span class="seperate"></span>

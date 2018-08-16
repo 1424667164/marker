@@ -1,0 +1,8 @@
+<mat-dialog-content style="padding: 8px 24px;">
+  您确定要删除{{name}}
+  <br>
+</mat-dialog-content>
+<mat-dialog-actions style="justify-content: space-around;">
+  <button mat-button mat-dialog-close>取消</button>
+  <button mat-button [mat-dialog-close]="true">确定</button>
+</mat-dialog-actions>

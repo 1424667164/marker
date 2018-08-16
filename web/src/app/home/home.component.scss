@@ -1,0 +1,73 @@
+
+
+.list-item {
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.5s ease-in;
+    h4 span {
+        padding-left: 24px;
+        font-size: 12px;
+        vertical-align: text-bottom;
+    }
+    ::ng-deep .mat-list-text {
+        align-items: start;
+    }
+    &:hover {
+        box-shadow: 1px 1px 7px 0px;
+        transition: all 0.3s ease-out;
+        .indicator-right {
+            opacity: 0.8;
+            transition: all 0.5s ease-in;
+        } 
+    }
+    .indicator-right {
+        opacity: 0;
+        transition: all 0.3s ease-out;
+    }
+}
+
+
+.projects {
+    .header {
+        padding: 24px;
+        button {
+            float: right;
+            height: 42px;
+        }
+        .mat-expansion-panel {
+            .add-field {
+                margin-right: 12px !important;
+            }
+        }
+    }
+    .markers {
+        padding: 24px;
+    }
+    .add-field:nth-child(2) {
+        flex-grow: 2;
+    }
+    .project-item {
+        &:hover {
+            .icon-default {
+                display: none;
+            }
+        }
+        .icon-hover {
+            display: none;
+        }
+        .icon-hover:hover {
+            background: #3f51b5;
+            color: #fff;
+        }
+        &:hover .icon-hover {
+            display: block;
+        }
+    }
+}
+
+.jobs {
+    padding: 24px;
+    
+    .job-item {
+    }
+}

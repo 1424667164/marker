@@ -4,6 +4,13 @@ const path = require('path');
 const unzip = require('unzip');
 const cmd = require('child_process').exec;
 
+const init = require('./init');
+
+const appID = '123456';
+const masterKey = '123456'
+;
+init('http://172.16.1.209:1337/parse', appID, masterKey);
+
 function deleteall(path) {
 	var files = [];
 	if(fs.existsSync(path)) {
@@ -60,6 +67,35 @@ Parse.Cloud.define("unzipFiles", function (request, response) {
                 response.success(images);
             }
         });
+    } catch (e) {
+        response.error(e);
+    }
+});
+
+Parse.Cloud.define("setRole", async function (request, response) {
+    let role = request.params.role || 'default';
+    let name = request.params.name || false;
+    if(!name) {
+        response.error('no user name!');
+    }
+    try {
+        var query = new Parse.Query(Parse.Role);
+        query.equalTo("name", "default");
+        var res = await query.find({useMasterKey: masterKey});
+        if(res && res[0]) {
+            let queryUser = new Parse.Query(Parse.User);
+            queryUser.equalTo("username", name);
+            let resUser = await queryUser.find({useMasterKey: masterKey});
+            if(resUser && resUser[0]){
+                res[0].getUsers().add(resUser[0]);
+                await res[0].save(null, {useMasterKey: masterKey});
+                response.success(true);
+            } else {
+                response.success(false);
+            }
+        } else {
+            response.success(false);
+        }
     } catch (e) {
         response.error(e);
     }

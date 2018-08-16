@@ -1,0 +1,13 @@
+<div class="header">
+  请选择要生成 标注对象 的图片, <span>已选: <strong>{{options.selectedOptions.selected.length}}</strong>/{{images.length}}</span>
+</div>
+<mat-selection-list #options (selectionChange)="selectChanged($event)">
+  <mat-list-option *ngFor="let img of images; let i = index" [checkboxPosition]="befor" [value]="i" [selected]="img.markedd">
+    {{img.url}}
+  </mat-list-option>
+</mat-selection-list>
+<div class="footer">
+    <mat-checkbox #all (change)="all.checked ? options.selectAll() : options.deselectAll()">全选</mat-checkbox>
+    <button mat-button color="warn" mat-dialog-close>取消</button>
+    <button mat-raised-button color="primary" (click)="createMarks(options.selectedOptions.selected)">确定</button>
+</div>

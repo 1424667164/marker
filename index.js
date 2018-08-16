@@ -3,6 +3,7 @@ var ParseServer = require('parse-server').ParseServer;
 var app = express();
 
 var api = new ParseServer({
+  appName: 'marker',
   databaseURI: 'mongodb://localhost:20002/parse', // Connection string for your MongoDB database
   cloud: 'D:\\Works\\Learning\\marker\\cloud\\main.js', // Absolute path to your Cloud Code
   appId: '123456',
@@ -16,10 +17,11 @@ var api = new ParseServer({
     options: {
     } 
   },
-  maxUploadSize: '256mb',
   liveQuery: {
-    classNames: ['project']
-  }
+    classNames: ['Project', 'Mark', 'Image', 'Job', 'BBox']
+  },
+  maxUploadSize: '256mb',
+  allowClientClassCreation: false,
 });
 
 // Serve the Parse API on the /parse URL prefix

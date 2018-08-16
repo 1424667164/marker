@@ -1,34 +1,35 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { Observable, Observer } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { MatSnackBar } from '@angular/material';
-import { ProjectService, Parse, ParseObject, ParseService } from '../../../services/parse.service';
-import { PublicService, Type } from '../../../services/public.service';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
+import { Parse, ParseObject, ParseService } from '../../../services/parse.service';
+import { ProjectService } from '../../../services/parse/project.service';
+import { ImageService, Image } from '../../../services/parse/image.service';
+import { UserService } from '../../../services/parse/user.service';
+import { ConformComponent } from '../../dialog/conform/conform.component'
+import { CustomErrorStateMatcher } from '../../../services/public.service';
 
 @Component({
   selector: 'app-setting',
   templateUrl: './setting.component.html',
   styleUrls: ['./setting.component.scss']
 })
-export class SettingComponent implements OnInit {
+export class SettingComponent implements AfterContentInit {
   private id = '';
-  private newType = ''; // create type
   private newImage = null;  // upload image
   private newZip = null;  // upload zip
   private newImagePath = '';  // upload image name
   private newZipPath = '';  // upload zip name
 
   private project: ParseObject = {};  // current project
+  private images = [];
   private currentPreview = {};  // current preview image
 
   private get name() {
-    return this.project.get && this.project.get('name');
+    return this.project && this.project.get && this.project.get('name');
   }
   private get types() {
-    return this.project.get && this.project.get('types') || [];
-  }
-  private get images() {
-    return this.project.get && this.project.get('images') || [];
+    return this.project && this.project.get && this.project.get('types') || [];
   }
 
   private listImageObserver: Observer<any[]> = null;
@@ -50,23 +51,46 @@ export class SettingComponent implements OnInit {
       this.listImageObserver.next([]);
     }
   }
+  private typeFormControl = null;
 
   constructor(
     private route: ActivatedRoute,
     private projectService: ProjectService,
-    private publicService: PublicService,
+    private imageService: ImageService,
     private parseService: ParseService,
-    private snackBar: MatSnackBar
-  ) { }
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private matcher: CustomErrorStateMatcher,
+    private userService: UserService
+  ) {
+    this.typeFormControl = matcher.formControl(true);
+  }
 
-  ngOnInit() {
-    this.id = this.route.snapshot.paramMap.get('id');
+  ngAfterContentInit() {
+    this.id = this.route.parent.snapshot.paramMap.get('id');
+    // this.projectService.subscribe({}, (() => {
+    //   this.project = this.projectService.projects[this.id] || {};
 
-    this.projectService.subscribe((() => {
-      this.project = this.projectService.projects[this.id] || {};
-      this.publicService.setTitle(this.name);
-    }).bind(this));
-    this.projectService.reload();
+    // }).bind(this));
+    // this.projectService.reload();
+    this.project = this.route.snapshot.data.project;
+console.log(this.route);
+    if (this.project && this.project.toPointer) {console.log(11);
+      let imgSubString = this.imageService.subscribe({ project: this.project.toPointer() }, ((images_) => {
+        this.images.splice(0, this.images.length);
+        for (let key in images_) {
+          this.images.push({
+            id: images_[key].id,
+            url: images_[key].get('url'),
+            width: images_[key].get('width'),
+            height: images_[key].get('height'),
+            marks: images_[key].get('marks'),
+            ref: images_[key]
+          })
+        }
+      }).bind(this));
+      this.imageService.reload(imgSubString);
+    }
   }
 
   async addType() {
@@ -74,10 +98,17 @@ export class SettingComponent implements OnInit {
       if (!this.project.has('types')) {
         this.project.set('types', []);
       }
-      this.project.addUnique('types', this.newType);
+      this.project.addUnique('types', this.typeFormControl.value);
       await this.project.save();
-      this.newType = '';
+      this.typeFormControl.reset();
     } catch (e) {
+      if (e.code === 119) {
+        this.snackBar.open("您没有足够的权限！", null, {
+          duration: 2000,
+          verticalPosition: 'top'
+        });
+        this.project.fetch();
+      }
       console.error(e);
     }
   }
@@ -114,24 +145,34 @@ export class SettingComponent implements OnInit {
       return;
     }
     try {
-      if (!this.project.has('images')) {
-        this.project.set('images', []);
+      if (!this.newImage) {
+        return;
       }
-      let name = '' + Math.round(Math.random() * 10000000000) + '.jpg';
-      let parseFile = new Parse.File(name, { base64: this.newImage }, 'image/jpeg');
+      let ext = this.newImage.substr(this.newImage.indexOf('/') + 1, 3);
+      let name = '' + Math.round(Math.random() * 10000000000) + '.' + ext;
+      let parseFile = new Parse.File(name, { base64: this.newImage }, 'image/' + ext);
       await parseFile.save();
       let url = parseFile.url();
       let id = url.substr(url.lastIndexOf('/') + 1);
       id = id.substr(0, id.lastIndexOf('.'));
       id += Math.round(Math.random() * 1000000);
-      this.project.addUnique('images', {
-        id,
-        url,
-        hide: false
-      });
-      await this.project.save();
-      this.newImage = null;
-      this.newImagePath = '';
+      let image = new Image();
+      image.set('url', url);
+      image.set('marks', 0);
+      image.set('width', 0);
+      image.set('height', 0);
+      image.set('user', Parse.User.current().toPointer());
+      image.set('project', this.project.toPointer());
+      let res = await this.parseService.add(image);
+      if (res.code === 119) {
+        this.snackBar.open("您没有添加图片的权限！", null, {
+          duration: 2000,
+          verticalPosition: 'top'
+        });
+      } else {
+        this.newImage = null;
+        this.newImagePath = '';
+      }
     } catch (e) {
       console.error(e);
     }
@@ -143,25 +184,33 @@ export class SettingComponent implements OnInit {
     try {
       let name = '' + Math.round(Math.random() * 10000000000) + '.zip';
       let parseFile = new Parse.File(name, { base64: this.newZip }, 'application/zip');
-      let res = await parseFile.save();
+      parseFile = await parseFile.save();
       let zipUrl: String = parseFile.url();
-      res = await this.parseService.unzipFiles(zipUrl);
+      let res = await this.parseService.unzipFiles(zipUrl);
       if (res && res.length > 0 && res.forEach) {
         let baseUrl = zipUrl.substr(0, zipUrl.lastIndexOf('/') + 1);
         for (let file of res) {
           if (/[a-zA-Z0-9_-]+\.(png|jpg|jpeg)/.test(file)) {
             let url = baseUrl + file;
-            let id = url.substr(url.lastIndexOf('/') + 1);
-            id = id.substr(0, id.lastIndexOf('.'));
-            id += Math.round(Math.random() * 1000000);
-            this.project.addUnique('images', {
-              id,
-              url,
-              hide: false
-            });
+            // let id = url.substr(url.lastIndexOf('/') + 1);
+            // id = id.substr(0, id.lastIndexOf('.'));
+            // id += Math.round(Math.random() * 1000000);
+
+            let image = new Image();
+            image.set('url', url);
+            image.set('marks', 0);
+            image.set('width', 0);
+            image.set('height', 0);
+            image.set('user', Parse.User.current().toPointer());
+            image.set('project', this.project.toPointer());
+            let res = await this.parseService.add(image);
+            // this.project.addUnique('images', {
+            //   id,
+            //   url,
+            //   hide: false
+            // });
           }
         }
-        await this.project.save();
       }
       this.newZip = null;
       this.newZipPath = '';
@@ -171,10 +220,21 @@ export class SettingComponent implements OnInit {
   }
   async removeImage(image) {
     try {
-      if (this.parseService.deleteFile(image)) {
-        this.project.remove('images', image);
-        await this.project.save();
-      }
+      let dlg = this.dialog.open(ConformComponent, { width: '250px', data: image.id });
+      dlg.afterClosed().subscribe(async result => {
+        if (result) {
+          let res: { code: number } = await this.parseService.destroy(image.ref);
+          if (res.code === 119) {
+            this.snackBar.open("您没有删除权限！", null, {
+              duration: 2000,
+              verticalPosition: 'top'
+            });
+          } else {
+            await this.parseService.deleteFile(image.url);
+            this.currentPreview = {};
+          }
+        }
+      });
     } catch (e) {
       console.error(e);
     }

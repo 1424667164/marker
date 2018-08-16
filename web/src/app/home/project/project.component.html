@@ -1,8 +1,7 @@
 <mat-nav-list class="top-menu">
-    <a mat-list-item (click)="currentMenu=0" [ngClass]="{'active': currentMenu==0}" [routerLink]="['/', id]"> 标定 </a>
-    <a mat-list-item (click)="currentMenu=1" [ngClass]="{'active': currentMenu==1}" [routerLink]="['/', id, 'setting']"> 设置 </a>
-    <a mat-list-item (click)="currentMenu=2" [ngClass]="{'active': currentMenu==2}" [routerLink]="['/', id, 'result']"> 结果 </a>
-    <a mat-list-item (click)="currentMenu=3" [ngClass]="{'active': currentMenu==3}" [routerLink]="['/', id, 'job']"> 任务 </a>
-    <!-- <span id="indicator"></span> -->
+    <!-- <a mat-list-item (click)="currentMenu=0" [ngClass]="{'active': currentMenu==0}" [routerLink]="['/', id]"> 标定 </a> -->
+    <a mat-list-item (click)="currentMenu=0" [ngClass]="{'active': currentMenu==0}" [routerLink]="['/project/', id, 'setting']"> 设置 </a>
+    <!-- <a mat-list-item (click)="currentMenu=2" [ngClass]="{'active': currentMenu==2}" [routerLink]="['/', id, 'result']"> 结果 </a> -->
+    <a mat-list-item (click)="currentMenu=1" [ngClass]="{'active': currentMenu==1}" [routerLink]="['/project/', id, 'job']"> 任务 </a>
  </mat-nav-list>
 <router-outlet></router-outlet>

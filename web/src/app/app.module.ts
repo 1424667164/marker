@@ -23,14 +23,21 @@ import {
   MatCardModule,
   MatChipsModule,
   MatTooltipModule,
-  MatSnackBarModule
-} from '@angular/material/';
+  MatSnackBarModule,
+  MatDialogModule
+} from '@angular/material';
 import {MatIconModule} from '@angular/material/icon';
 import { ProjectComponent } from './home/project/project.component';
-import { MarkComponent } from './home/project/mark/mark.component';
 import { SettingComponent } from './home/project/setting/setting.component';
-import { ResultComponent } from './home/project/result/result.component';
 import { JobComponent } from './home/project/job/job.component';
+import { JobsComponent } from './home/jobs/jobs.component';
+import { MarkComponent } from './home/jobs/mark/mark.component';
+import { ResultComponent } from './home/jobs/result/result.component';
+import { AdminDirective } from './directives/admin.directive';
+import { PanelComponent } from './home/project/job/panel/panel.component';
+import { LinkDirective } from './directives/link.directive';
+import { ConformComponent } from './home/dialog/conform/conform.component';
+import { SetmarksComponent } from './home/dialog/setmarks/setmarks.component';
 
 
 @NgModule({
@@ -40,10 +47,16 @@ import { JobComponent } from './home/project/job/job.component';
     SignupComponent,
     HomeComponent,
     ProjectComponent,
+    JobsComponent,
     MarkComponent,
     SettingComponent,
     ResultComponent,
-    JobComponent
+    JobComponent,
+    AdminDirective,
+    PanelComponent,
+    LinkDirective,
+    ConformComponent,
+    SetmarksComponent
   ],
   imports: [
     HttpClientModule,
@@ -65,8 +78,10 @@ import { JobComponent } from './home/project/job/job.component';
     MatChipsModule,
     MatTooltipModule,
     MatSnackBarModule,
+    MatDialogModule,
     AppRoutingModule
   ],
+  entryComponents: [SetmarksComponent, ConformComponent],
   providers: [],
   bootstrap: [AppComponent]
 })
