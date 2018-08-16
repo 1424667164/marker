@@ -1,4 +1,3 @@
-import urllib
 import urllib2
 import os
 from os import listdir, getcwd
@@ -40,7 +39,6 @@ def png2jpg(file):
         print e
 
 def download(url):
-    # sleep(2)
     try:
         header = {
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
@@ -59,8 +57,6 @@ def download(url):
         if ord(binary_data[0]) == 0x47 and ord(binary_data[1]) == 0x49: # gif
             imgPath = imgPath.replace('.jpg', '.gif')
             gif = True
-        # if ord(binary_data[0]) != 0xff and ord(binary_data[1]) != 0xd8: # not jpg
-        #     print '%x %x'% (ord(binary_data[0]), ord(binary_data[1]))
         with open(imgPath, 'wb') as temp_file:
             temp_file.write(binary_data)
         
@@ -68,40 +64,15 @@ def download(url):
             gif2jpg(imgPath)
         if png:
             png2jpg(imgPath)
-        # img = cv.imread(imgPath)
-        # if img is None:
-        #     print imgPath
-        #     newPath = imgPath.replace('.jpg', '.png')
-        #     os.rename(imgPath, newPath)
-        #     img = cv.imread(newPath)
-        #     if img is None:
-        #         newPath_ = imgPath.replace('.jpg', '.gif')
-        #         os.rename(newPath, newPath_)
-        #         img = cv.imread(newPath_)
-        #         if img is None:
-        #             print '%s is invalid'%imgPath
-        #         else:
-        #             os.remove(newPath_)
-        #             cv.imwrite(imgPath, img)
-        #     else:
-        #         os.remove(newPath)
-        # else:
-        #     # print img.header
-        #     pass
-        # temp_file.close()
-        # urllib.urlretrieve(url, filename=join(wd, sets,'images', imgName))
         return True
     except Exception as e:
         print "error found",e
         return False
 
 def generate():
-
     if not os.path.exists(join(wd, sets,'images')):
-        # os.rmdir(join(wd, sets,'images'))
         os.makedirs(join(wd, sets,'images'))
     if not os.path.exists(join(wd, sets,'labels')):
-        # os.rmdir(join(wd, sets,'labels'))
         os.makedirs(join(wd, sets,'labels'))
 
     origin_labels = open(join(wd, '%s.txt'%(txtName))).read().strip().split('\n')
@@ -127,7 +98,6 @@ def generate():
                 valid_txt.write(join(wd, sets,'images/%s'%(line[0][line[0].rfind('/')+1:])) + '\n')
             else:
                 train_txt.write(join(wd, sets,'images/%s'%(line[0][line[0].rfind('/')+1:])) + '\n')
-                # print join(wd, sets,'images/%s'%(line[0][line[0].rfind('/')+1:]))
 
     train_txt.close()
     valid_txt.close()
@@ -154,8 +124,6 @@ def check():
     for valid in valid_txt:
         if not os.path.exists(valid):
             print '%s is not found'%(valid)
-    # train_txt.close()
-    # valid_txt.close()
 
 def geConfig(classes, trainPath, validPath, namesPath, batchs):
     dataString = config.data(classes, trainPath, validPath, namesPath)
