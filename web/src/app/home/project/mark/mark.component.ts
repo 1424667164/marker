@@ -2,28 +2,20 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Observable, Observer } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
-import { ProjectService, Parse, ParseObject, ParseService } from '../../services/parse.service';
-import { PublicService, Type } from '../../services/public.service';
+import { ProjectService, Parse, ParseObject, ParseService } from '../../../services/parse.service';
+import { PublicService, Type } from '../../../services/public.service';
 
 @Component({
-  selector: 'app-project',
-  templateUrl: './project.component.html',
-  styleUrls: ['./project.component.scss']
+  selector: 'app-mark',
+  templateUrl: './mark.component.html',
+  styleUrls: ['./mark.component.scss']
 })
-export class ProjectComponent implements OnInit, AfterViewInit {
-  private id = '';
-  private currentMenu = 0;
-  private newType = ''; // create type
-  private newImage = null;  // upload image
-  private newZip = null;  // upload zip
-  private newImagePath = '';  // upload image name
-  private newZipPath = '';  // upload zip name
+export class MarkComponent implements OnInit, AfterViewInit {
 
-  private resultString = ''; // result as string
+  private id = '';
 
   private currentType = 0;  // current selected mark type
   private project: ParseObject = {};  // current project
-  private currentPreview = {};  // current preview image
   // filter image show
   private currentFilter_ = Type.FilterTypes.Normal;
   private get currentFilter() {
@@ -65,8 +57,6 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     width: 1000,
     height: 1000
   };
-  private ctx: CanvasRenderingContext2D = null;
-
   private get name() {
     return this.project.get && this.project.get('name');
   }
@@ -77,32 +67,9 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     return this.project.get && this.project.get('images') || [];
   }
 
-  private listImageObserver: Observer<any[]> = null;
-  private get listedImages() {
-    return new Observable<any[]>((observer: Observer<any[]>) => {
-      let listImages = [];
-      for (let i = this.currentImageSlice; i < Math.min(this.currentImageSlice + 20, this.images.length); i++) {
-        listImages.push(this.images[i]);
-      }
-      observer.next(listImages);
-      this.listImageObserver = observer;
-    });
-  }
-
   private currentImageIndex = -1;  // current image url
   private get currentImage() {
     return (this.images && this.images[this.currentImageIndex]) || {};
-  }
-
-  private showAll_ = false; // if show all images
-  private get showAll() {
-    return this.showAll_;
-  }
-  private set showAll(val) {
-    this.showAll_ = val;
-    if (!val && this.currentImage.hide) {
-      this.next({});
-    }
   }
 
   private get currentRectStyle() {
@@ -117,15 +84,6 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   }
   private allRectStyle = [];
 
-  private currentImageSlice = 0;  // current images slice position
-  private set currentImageSliceChange(v) {
-    this.currentImageSlice += v;
-    this.currentImageSlice = Math.min(Math.max(this.currentImageSlice, 0), this.images.length - 19);
-    if (this.listImageObserver) {
-      this.listImageObserver.next([]);
-    }
-  }
-
   constructor(
     private route: ActivatedRoute,
     private projectService: ProjectService,
@@ -136,9 +94,6 @@ export class ProjectComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
-    this.route.data.subscribe(data => {
-      console.dir(data);
-    });
     this.projectService.subscribe((() => {
       this.project = this.projectService.projects[this.id] || {};
       this.publicService.setTitle(this.name);
@@ -164,15 +119,6 @@ export class ProjectComponent implements OnInit, AfterViewInit {
       this.currentImageIndex = this.project.get('current') || 0;
       this.currentImageIndex -= 1;
       this.next({});
-      // for (let img of this.images) {
-      //   if (!img.marks) {
-      //     continue;
-      //   }
-      //   for (let m of img.marks) {
-      //     m.label = this.currentType;
-      //   }
-      // }
-      // await this.project.save();
     }, 300);
   }
   ngAfterViewInit() {
@@ -180,122 +126,6 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     if (overlay) {
       this.bboxs.width = overlay.clientWidth;
       this.bboxs.height = overlay.clientHeight;
-    }
-  }
-  tabChanged(index) {
-    if (index === 1) {
-
-    }
-  }
-
-  async addType() {
-    try {
-      if (!this.project.has('types')) {
-        this.project.set('types', []);
-      }
-      this.project.addUnique('types', this.newType);
-      await this.project.save();
-      this.newType = '';
-    } catch (e) {
-      console.error(e);
-    }
-  }
-  async removeType(type) {
-    try {
-      this.project.remove('types', type);
-      await this.project.save();
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  onFileChange(files) {
-    if (files && files[0]) {
-      // this.newImage = files[0];
-      let fr = new FileReader();
-      fr.readAsDataURL(files[0]);
-      fr.onloadend = () => {
-        this.newImage = fr.result;
-      };
-    }
-  }
-  onFileChangeZip(files) {
-    if (files && files[0]) {
-      let fr = new FileReader();
-      fr.readAsDataURL(files[0]);
-      fr.onloadend = () => {
-        this.newZip = fr.result;
-      };
-    }
-  }
-  async addImage() {
-    if (!this.newImage) {
-      return;
-    }
-    try {
-      if (!this.project.has('images')) {
-        this.project.set('images', []);
-      }
-      let name = '' + Math.round(Math.random() * 10000000000) + '.jpg';
-      let parseFile = new Parse.File(name, { base64: this.newImage }, 'image/jpeg');
-      await parseFile.save();
-      let url = parseFile.url();
-      let id = url.substr(url.lastIndexOf('/') + 1);
-      id = id.substr(0, id.lastIndexOf('.'));
-      id += Math.round(Math.random() * 1000000);
-      this.project.addUnique('images', {
-        id,
-        url,
-        hide: false
-      });
-      await this.project.save();
-      this.newImage = null;
-      this.newImagePath = '';
-    } catch (e) {
-      console.error(e);
-    }
-  }
-  async addImages() {
-    if (!this.newZip) {
-      return;
-    }
-    try {
-      let name = '' + Math.round(Math.random() * 10000000000) + '.zip';
-      let parseFile = new Parse.File(name, { base64: this.newZip }, 'application/zip');
-      let res = await parseFile.save();
-      let zipUrl: String = parseFile.url();
-      res = await this.parseService.unzipFiles(zipUrl);
-      if (res && res.length > 0 && res.forEach) {
-        let baseUrl = zipUrl.substr(0, zipUrl.lastIndexOf('/') + 1);
-        for (let file of res) {
-          if (/[a-zA-Z0-9_-]+\.(png|jpg|jpeg)/.test(file)) {
-            let url = baseUrl + file;
-            let id = url.substr(url.lastIndexOf('/') + 1);
-            id = id.substr(0, id.lastIndexOf('.'));
-            id += Math.round(Math.random() * 1000000);
-            this.project.addUnique('images', {
-              id,
-              url,
-              hide: false
-            });
-          }
-        }
-        await this.project.save();
-      }
-      this.newZip = null;
-      this.newZipPath = '';
-    } catch (e) {
-      console.error(e);
-    }
-  }
-  async removeImage(image) {
-    try {
-      if (this.parseService.deleteFile(image)) {
-        this.project.remove('images', image);
-        await this.project.save();
-      }
-    } catch (e) {
-      console.error(e);
     }
   }
 
@@ -426,26 +256,6 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     }
   }
 
-  generateResult() {
-    this.resultString = '';
-    this.resultString += '以下为类型信息:\n\n';
-    for (let type of this.types) {
-      this.resultString += type;
-    }
-
-    this.resultString += '\n\n以下为标签信息:\n\n';
-    for (let img of this.images) {
-      if (!img.marks || !img.marks.length) {
-        continue;
-      }
-      this.resultString += img.url + ' ';
-      for (let mark of img.marks) {
-        this.resultString += `${mark.label},${mark.x},${mark.y},${mark.w},${mark.h},${mark.t} `;
-      }
-      this.resultString += '\n';
-    }
-  }
-
   prepareBox() {
     this.allRectStyle.splice(0, this.allRectStyle.length);
     for (let rect of this.bboxs.all) {
@@ -531,3 +341,4 @@ export class ProjectComponent implements OnInit, AfterViewInit {
   }
 
 }
+

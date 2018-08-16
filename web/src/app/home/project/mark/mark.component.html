@@ -1,0 +1,46 @@
+<div id="image-box" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)" (mousemove)="onMouseMove($event)">
+  <img [src]="currentImage.url || ''" alt="" />
+  <span *ngIf="currentImage.hide" class="image-indicator">{{'已废弃'}}</span>
+  <span class="image-indicator bottom">{{'#' + currentImageIndex + ' ' + (currentImage.marks ? '已标注' + currentImage.marks.length + '个' : '未标注')}}</span>
+</div>
+<div id="overlay" [ngClass]="{'capture-moving':bboxs.capture}">
+  <span class="rect" [ngStyle]="currentRectStyle"></span>
+  <div class="rect" *ngFor="let rectStyle of allRectStyle" [ngStyle]="rectStyle">
+    <span *ngIf="!rectStyle.tmp" class="type-label">{{types[rectStyle.rect.label]}}</span>
+    <button mat-icon-button (click)="removeMark(rectStyle)" matTooltip="删除标定">
+      <mat-icon aria-label="">close</mat-icon>
+    </button>
+  </div>
+</div>
+<div id="tools">
+  <mat-select matTooltip="选择你要标注的目标类别" placeholder="选择类别" [(ngModel)]="currentType">
+    <mat-option *ngFor="let type of types, let i = index" [value]="i">
+      {{type}}
+    </mat-option>
+  </mat-select>
+  <mat-select matTooltip="按条件筛选图片" class="right-auto" placeholder="显示筛选" [(ngModel)]="currentFilter">
+    <mat-option *ngFor="let filter of ImageFilters" [value]="filter.type">
+      {{filter.name}}
+    </mat-option>
+  </mat-select>
+  <button mat-flat-button (click)="pre($event)" matTooltip="上一张">
+    <mat-icon aria-label="">chevron_left</mat-icon>
+  </button>
+  <button mat-flat-button (click)="next($event)" matTooltip="下一张">
+    <mat-icon aria-label="">chevron_right</mat-icon>
+  </button>
+
+  <span class="seperate"></span>
+  <span class="seperate"></span>
+
+  <button mat-flat-button matTooltip="保存标记">
+    <mat-icon aria-label="" (click)="mark()">check</mat-icon>
+  </button>
+  <button class="left-auto" (click)="hide()" mat-flat-button [matTooltip]="currentImage.hide ? '恢复图片' : '废弃图片'">
+    <mat-icon aria-label="">{{currentImage.hide ? 'refresh' : 'close'}}</mat-icon>
+  </button>
+
+  <span class="seperate"></span>
+  <!-- <mat-checkbox matTooltip="显示所有图片" class="check-box" id="show-all" [(ngModel)]="showAll" color="primary">显示</mat-checkbox> -->
+  <mat-checkbox matTooltip="标注框是否可选装" class="check-box" id="can-rotate" [(ngModel)]="canRotate" color="primary">旋转</mat-checkbox>
+</div>
