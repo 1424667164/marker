@@ -49,7 +49,7 @@
     <mat-list-item *ngFor="let job of jobs" class="list-item job-item" (click)="selectJob(job)">
       <mat-icon mat-list-icon class="icon-default">assignment</mat-icon>
       <h4 mat-line>
-        {{job.name}}
+        [{{job.project}}] {{job.name}}
         <span>marks: {{job.marks.length}} / prejob: {{job.preCount}}</span>
       </h4>
       <p mat-line> {{job.active ? (job.commit > job.rollback ? '已完成' : '处理中...') : '等待中...'}} </p>

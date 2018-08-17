@@ -1,8 +1,9 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { JobService, Job } from '../../../services/parse/job.service';
+import { Mark } from '../../../services/parse/mark.service';
 import { UserService } from '../../../services/parse/user.service';
-import { ParseObject } from '../../../services/parse.service';
+import { ParseObject, Parse } from '../../../services/parse.service';
 import { Type } from '../../../services/public.service';
 import { LinkDirective } from '../../../directives/link.directive';
 
@@ -146,6 +147,12 @@ export class JobComponent implements OnInit, AfterViewInit {
       job.set('project', this.project.toPointer());
       job.set('posX', evt.layerX);
       job.set('posY', evt.layerY);
+      let marks = new Parse.Relation(job, 'marks');
+      marks.targetClassName = 'Mark';
+      job.set('marks', marks);
+      let next = new Parse.Relation(job, 'next');
+      next.targetClassName = 'Job';
+      job.set('next', next);
       await job.save();
     } catch (e) {
       console.error(e);

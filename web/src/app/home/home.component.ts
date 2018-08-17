@@ -75,6 +75,7 @@ export class HomeComponent implements OnInit {
           pre: await jobs[key].get('pre').query().find(),
           preCount: 0,
           marks: await jobs[key].get('marks').query().find(),
+          project: (await jobs[key].get('project').fetch()).get('name'),
           ref: jobs[key]
         });
       }

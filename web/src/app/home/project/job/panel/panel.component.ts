@@ -198,6 +198,5 @@ export class PanelComponent implements OnInit, OnDestroy, AfterContentInit {
   }
 
   ngOnDestroy() {
-    console.log(1);
   }
 }
