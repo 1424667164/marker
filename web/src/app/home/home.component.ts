@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, TemplateRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -14,7 +14,7 @@ import { ConformComponent } from './dialog/conform/conform.component';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
   private nameFormControl: FormControl = null;
   private descriptionFormControl: FormControl = null;
 
@@ -64,27 +64,21 @@ export class HomeComponent implements OnInit, OnDestroy {
       return;
     }
     let whereStringJob = this.jobService.subscribe({ user: Parse.User.current().toPointer() }, async (jobs) => {
-      this.jobs = [];
+      let jobs_ = [];
       for (let key in jobs) {
-        if(jobs[key].get('user').id !== Parse.User.current().id) {
-          // continue;
-        }
-        this.jobs.push({
+        jobs_.push({
           id: jobs[key].id,
           name: jobs[key].get('name'),
           active: jobs[key].get('active') || true,
           commit: jobs[key].get('commit') || 0,
           rollback: jobs[key].get('rollback') || 0,
-          // user: jobs[key].get('user'),
           pre: await jobs[key].get('pre').query().find(),
           preCount: 0,
-          // next: await jobs[key].get('next').query().find(),
-          // nextCount: 0,
           marks: await jobs[key].get('marks').query().find(),
           ref: jobs[key]
         });
       }
-      for (let job of this.jobs) {
+      for (let job of jobs_) {
         for (let pre of job.pre) {
           job.preCount++;
           if (!(pre.attributes.commit > pre.attributes.rollback)) {
@@ -92,12 +86,16 @@ export class HomeComponent implements OnInit, OnDestroy {
           }
         }
       }
+      this.jobs = jobs_;
     });
     this.jobService.reload(whereStringJob);
   }
   
-  select(id,) {
+  selectProject(id) {
     this.router.navigate(['/project/', id]);
+  } 
+  selectJob(job) {
+    this.router.navigate(['/job/', job.id]);
   }
   async add() {
     const project = new Project();
@@ -133,8 +131,5 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       }
     });
-  }
-
-  ngOnDestroy() {
   }
 }

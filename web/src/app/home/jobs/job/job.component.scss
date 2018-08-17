@@ -1,0 +1,37 @@
+:host {
+    padding: 0px;
+    width: 100%;
+    height: calc(100% - 48px);
+    position: relative;
+    display: block;
+    overflow: hidden;
+    #jobs {
+        position: absolute;
+        width: 5000px;
+        height: 5000px;
+        left: calc(50% - 2500px);
+        top: calc(50% - 2500px);    
+        background: linear-gradient(90deg,#666 1%, transparent 0),  linear-gradient(#666 1%,#333 0);
+        background-size: 125px 125px;
+        transition-property: all;
+        transition-timing-function: ease-in;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        #context-menu {
+            display: none;
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            align-items: center;
+            justify-content: center;
+        }
+        .job-item {
+            position: absolute;
+            background: transparent;
+            padding: 16px;
+            width: 240px;
+            padding: 0;
+        }
+    }   
+}

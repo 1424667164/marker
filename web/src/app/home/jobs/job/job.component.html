@@ -1,0 +1,5 @@
+<div id="jobs" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)" (mousemove)="onMouseMove($event)" (mousewheel)="onMouseWheel($event)"
+  [ngStyle]="artBoardStyle" appLink [jobs]="jobs" [scale]="artBoardStyle_.scale" [viewport]="viewport">
+  <job-panel-visual class="job-item" *ngFor="let job of jobs" [ngStyle]="{left: job.x + 'px', top: job.y + 'px'}" [job]="job" [scale]="artBoardStyle_.scale"
+    [project]="project"></job-panel-visual>
+</div>

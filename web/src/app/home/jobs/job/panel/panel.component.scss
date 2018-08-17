@@ -1,0 +1,188 @@
+:host {
+    position: relative;
+}
+.link {
+    width: 10px;
+    height: 14px;
+    position: absolute;
+    border: 4px solid #FFF;
+    top: 45px;
+    cursor: pointer;
+    &.left {
+        border-top-left-radius: 50%;
+        border-bottom-left-radius: 50%;
+        right: 100%;
+        border-right: none;
+    }
+    &.right {
+        border-top-right-radius: 50%;
+        border-bottom-right-radius: 50%;
+        left: 100%;
+        border-left: none;
+    }
+    &.active {
+        background: #0F0;
+    }
+    &.linked {
+        background: #0F0;
+    }
+    &:hover {
+        border-color: #0F0;
+    }
+}
+#actions {
+    text-align: right;
+    .mat-icon {
+        color: #FFF;
+        cursor: pointer;
+        &:last-of-type {
+            margin-left: 8px;
+            transition: all 0.18s ease-in-out;
+            &:hover {
+                background: #F00;
+            }
+        }
+        &:first-of-type {
+            margin-left: 8px;
+            transition: all 0.18s ease-in-out;
+            &:hover {
+                background: rgb(24, 202, 8);
+            }
+        }
+    }
+}
+.mat-card {
+    padding: 0;
+    &.warning {
+        box-shadow: 0 0 5px 2px #F00;
+    }
+    &.current {
+        border: 3px solid #0F0;
+        .mat-card-title {
+            background: linear-gradient(#0F0 95%, #666 96%, #FFF 100% ) !important;
+        }
+    }
+    .mat-card-title {
+        margin-bottom: 0;
+        padding: 8px;
+        background: linear-gradient(#EEE 95%, #666 96%, #FFF 100% );
+        input {
+            appearance: none;
+            border: none;
+            max-width: 70%;
+            display: block;
+            font-size: 18px;
+            background: transparent;
+            padding: 4px 6px;
+            outline: none;
+            border: 1px solid transparent;
+            transition: all 0.18s ease-in-out;
+            &:focus {
+                border: 1px solid #BBB;
+                background: #FFF;
+            }
+        }
+    }
+    .mat-card-content {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        .label-line {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+            min-height: 32px;
+            span {
+                min-width: 64px;
+                position: relative;
+            }
+            .label-content {
+                flex-grow: 2;
+                padding: 0 5px 0 10px;
+                &.setting-content {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-size: 14px;
+                    span {
+                        margin-left: auto;
+                    }
+                    .mat-icon {
+                        color: #888;
+                        margin-left: auto;
+                        font-weight: lighter;
+                        cursor: pointer;
+                        &:hover {
+                            color: #3f51b5;
+                            font-weight: bold;
+                        }
+                    }
+                }
+            }
+        }
+        .logs-panel {
+            width: 100%;
+            box-shadow: none;
+            .mat-expansion-panel-header {
+                background: #FFF;
+                font-size: 14px;
+                padding-left: 0;
+            }
+            .mat-expansion-panel-content {
+                background: #EEE;
+                max-height: 240px;
+                overflow-y: auto;
+            }
+            .log-line {
+                display: block;
+            }
+        }
+    }
+    .warning {
+        color: #F77;
+        &::after {
+            content: "!";
+            color: #F00 !important;
+            position: absolute;
+            font-size: 12px;
+            top: 3px;
+            right: -10px;
+        }
+    }
+    input.warning::placeholder {
+        color: #F00;
+    }
+}
+.link-close {
+    position: absolute;
+    color: #FFF;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .mat-icon {
+        background: #F00;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 24px;
+        line-height: 36px;
+        cursor: pointer;
+        pointer-events: none;
+        opacity: 0;
+        transition: all 0.2s ease-in-out;
+    }
+    &:hover {
+        .mat-icon {
+            opacity: 1;
+            pointer-events: all;
+        }
+    }
+}

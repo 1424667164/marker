@@ -11,6 +11,7 @@ import { SettingComponent } from './home/project/setting/setting.component';
 import { JobComponent } from './home/project/job/job.component';
 import { JobsComponent } from './home/jobs/jobs.component';
 import { ResultComponent } from './home/jobs/result/result.component';
+import { JobVisualComponent } from './home/jobs/job/job.component';
 import { MarkComponent } from './home/jobs/mark/mark.component';
 
 const routes: Routes = [
@@ -50,7 +51,8 @@ const routes: Routes = [
               job: JobResolver
             }
           },
-          { path: 'result', component: ResultComponent, data: { index: 1 }, resolve: { job: JobResolver } }
+          { path: 'result', component: ResultComponent, data: { index: 1 }, resolve: { job: JobResolver } },
+          { path: 'job', component: JobVisualComponent, data: { index: 2 }, resolve: { job: JobResolver } }
         ]
       }
     ]

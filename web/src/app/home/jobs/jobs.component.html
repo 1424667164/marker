@@ -2,6 +2,6 @@
     <a mat-list-item (click)="currentMenu=0" [ngClass]="{'active': currentMenu==0}" [routerLink]="['/job', id]"> 标定 </a>
     <!-- <a mat-list-item (click)="currentMenu=1" [ngClass]="{'active': currentMenu==1}" [routerLink]="['/', id, 'setting']"> 设置 </a> -->
     <a mat-list-item (click)="currentMenu=1" [ngClass]="{'active': currentMenu==1}" [routerLink]="['/job', id, 'result']"> 结果 </a>
-    <!-- <a mat-list-item (click)="currentMenu=3" [ngClass]="{'active': currentMenu==3}" [routerLink]="['/', id, 'job']"> 任务 </a> -->
+    <a mat-list-item (click)="currentMenu=2" [ngClass]="{'active': currentMenu==2}" [routerLink]="['/job', id, 'job']"> 任务 </a>
  </mat-nav-list>
 <router-outlet></router-outlet>

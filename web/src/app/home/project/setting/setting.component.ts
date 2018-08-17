@@ -68,14 +68,8 @@ export class SettingComponent implements AfterContentInit {
 
   ngAfterContentInit() {
     this.id = this.route.parent.snapshot.paramMap.get('id');
-    // this.projectService.subscribe({}, (() => {
-    //   this.project = this.projectService.projects[this.id] || {};
-
-    // }).bind(this));
-    // this.projectService.reload();
     this.project = this.route.snapshot.data.project;
-console.log(this.route);
-    if (this.project && this.project.toPointer) {console.log(11);
+    if (this.project && this.project.toPointer) {
       let imgSubString = this.imageService.subscribe({ project: this.project.toPointer() }, ((images_) => {
         this.images.splice(0, this.images.length);
         for (let key in images_) {

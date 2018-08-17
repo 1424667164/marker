@@ -1,7 +1,7 @@
 <div id="image-box" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)" (mousemove)="onMouseMove($event)">
   <img [src]="currentMark.url || ''" alt="" />
   <span *ngIf="currentMark.hide" class="image-indicator">{{'已废弃'}}</span>
-  <span class="image-indicator bottom">{{'#' + currentMarkIndex + ' ' + (currentMark.bboxes ? '已标注' + currentMark.bboxes.length + '个' : '未标注')}}</span>
+  <span class="image-indicator bottom">{{currentMark.job && (currentMark.job.id == job.id ? '本任务' : currentMark.job.name)}} {{'#' + currentMarkIndex + ' ' + (currentMark.bboxes ? '已标注' + currentMark.bboxes.length + '个' : '未标注')}}</span>
 </div>
 <div id="overlay" [ngClass]="{'capture-moving':bboxs.capture}">
   <span class="rect" [ngStyle]="currentRectStyle"></span>

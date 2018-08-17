@@ -55,14 +55,10 @@
       </mat-chip-list>
       <div id="add-type">
         <mat-form-field>
-          <input matInput placeholder="输入类别"  [formControl]="typeFormControl" checkAdmin>
+          <input matInput placeholder="输入类别"  [formControl]="typeFormControl">
           <mat-hint align="start">请输入新的
             <strong>类别名称</strong>
           </mat-hint>
-          <mat-error *ngIf="typeFormControl.hasError('notAdmin')">
-            非管理员权限
-            <strong>不能</strong>操作
-          </mat-error>
         </mat-form-field>
         <button [disabled]="typeFormControl.invalid" mat-raised-button color="primary" (click)="addType()">
           <mat-icon>add</mat-icon>

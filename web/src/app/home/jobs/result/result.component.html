@@ -1,7 +1,10 @@
 <mat-card class="content-card" id="results">
     <mat-card-title>
       <span>结果生成</span>
-      <button mat-flat-button class="generate" color="primary" (click)="generateResult()">
+      <button [disabled]="rollback < commit" mat-flat-button class="generate" color="primary" (click)="commit_()" matTooltip="提交标定结果, 标志着此任务完成">
+        <mat-icon>event_available</mat-icon>
+      </button>
+      <button mat-flat-button class="generate" color="primary" (click)="generateResult()" matTooltip="生成 python 脚本">
         <mat-icon>file_copy</mat-icon>
       </button>
     </mat-card-title>

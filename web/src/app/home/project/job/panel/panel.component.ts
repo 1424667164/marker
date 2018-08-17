@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, AfterContentInit, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, AfterContentInit, EventEmitter } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { UserService } from '../../../../services/parse/user.service';
 import { ParseService } from '../../../../services/parse.service';
@@ -10,9 +10,23 @@ import { SetmarksComponent } from '../../../dialog/setmarks/setmarks.component';
   templateUrl: './panel.component.html',
   styleUrls: ['./panel.component.scss']
 })
-export class PanelComponent implements OnInit, AfterContentInit {
+export class PanelComponent implements OnInit, OnDestroy, AfterContentInit {
+  private job_: any = {};
   @Input()
-  job: any = {};
+  set job(j) {
+    this.job_ = j;
+    if (this.job_.user) {
+      for (let user of this.users) {
+        if (this.job_.user.id === user.ref.id) {
+          this.job_.user = user.ref;
+          break;
+        }
+      }
+    }
+  }
+  get job(): any {
+    return this.job_;
+  }
   @Input()
   scale = 1;
   @Input()
@@ -38,19 +52,19 @@ export class PanelComponent implements OnInit, AfterContentInit {
   ) { }
 
   ngOnInit() {
-    this.userService.subscribe({}, () => {
+    this.userService.subscribe({}, ((users) => {
       this.users.splice(0, this.users.length);
-      for (let key in this.userService.users) {
+      for (let key in users) {
         this.users.push({
-          name: this.userService.users[key].get('username'),
-          ref: this.userService.users[key]
+          name: users[key].get('username'),
+          ref: users[key]
         });
       }
-    });
-    this.userService.reload();
+    }).bind(this)).unsubscribe();
   }
   ngAfterContentInit() {
     if (this.job.user) {
+      this.job.user.id = this.job.user.id || this.job.user.objectId;
       for (let user of this.users) {
         if (this.job.user.id === user.ref.id) {
           this.job.user = user.ref;
@@ -96,7 +110,9 @@ export class PanelComponent implements OnInit, AfterContentInit {
   async removeLink(next) {
     try {
       await this.job.ref.get('next').remove(next.ref);
+      await next.ref.get('pre').remove(this.job.ref);
       await this.job.ref.save();
+      await next.ref.save();
     } catch (e) {
       console.error(e);
     }
@@ -179,5 +195,9 @@ export class PanelComponent implements OnInit, AfterContentInit {
         }
       });
     }
+  }
+
+  ngOnDestroy() {
+    console.log(1);
   }
 }

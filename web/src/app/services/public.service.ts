@@ -1,4 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot } from '@angular/router';
 import { Subject } from 'rxjs';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -49,6 +50,35 @@ export class CustomErrorStateMatcher implements ErrorStateMatcher {
     return new FormControl('', validators_);
   }
 
+}
+
+export class CustomReuseStrategy implements RouteReuseStrategy {
+
+  private handlers: {[key: string]: DetachedRouteHandle} = {};
+
+  private url(route: ActivatedRouteSnapshot) {
+    return (route.url.join("/") || route.parent.url.join("/")) + '-url-postfix'
+  }
+
+  shouldDetach(route: ActivatedRouteSnapshot): boolean {
+      return true; // reuse all routes
+  }
+  shouldAttach(route: ActivatedRouteSnapshot): boolean {
+    if (route.component['name'] === 'HomeComponent' || route.component['name'] == 'SignupComponent' || route.component['name'] == 'SigninComponent') {
+      this.handlers = {};
+      return false;
+    }
+    return !!this.handlers[this.url(route)];
+  }
+  store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
+     this.handlers[this.url(route)] = handle;
+  }
+  retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
+    return this.handlers[this.url(route)];    
+  }
+  shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
+    return future.routeConfig === curr.routeConfig;
+  }
 }
 
 export namespace Type {

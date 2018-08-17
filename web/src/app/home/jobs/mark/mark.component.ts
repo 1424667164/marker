@@ -92,33 +92,8 @@ export class MarkComponent implements OnInit, AfterViewInit {
     if (this.job) {
       try {
         this.project = await this.job.get('project').fetch();
-        let marks_ = await this.job.get('marks').query().find();
-        this.marks = [];
-        for (let key in marks_) {
-          let mark: any = {
-            id: marks_[key].id,
-            hide: marks_[key].get('hide') || false,
-            bboxes: [],
-            image: await marks_[key].get('image').fetch(),
-            ref: marks_[key]
-          };
-
-          mark.url = mark.image.get('url');
-          let bbs = await marks_[key].get('bboxes').query().find();
-          for (let box of bbs) {
-            mark.bboxes.push({
-              x: box.get('x') || 0,
-              y: box.get('y') || 0,
-              w: box.get('w') || 0,
-              h: box.get('h') || 0,
-              t: box.get('t') || 0,
-              ref: box
-            });
-          }
-          this.marks.push(mark);
-        }
+        this.marks = await this.fetchMarks(this.job);
         this.countFilter();
-        this.currentFilter = this.job.get('filter') || 0;
         this.currentMarkIndex = this.job.get('current') || 0;
         this.currentMarkIndex--;
         this.next(0);
@@ -126,6 +101,51 @@ export class MarkComponent implements OnInit, AfterViewInit {
         console.error(e)
       }
     }
+  }
+
+  async fetchMarks(job) {
+    if (!job || !job.get) {
+      return [];
+    }
+    let marks = [];
+    try {
+      let marks_ = await job.get('marks').query().find();
+      for (let key in marks_) {
+        let mark: any = {
+          id: marks_[key].id,
+          hide: marks_[key].get('hide') || false,
+          job: {
+            id: job.id,
+            name: job.get('name'),
+          },
+          bboxes: [],
+          image: await marks_[key].get('image').fetch(),
+          ref: marks_[key]
+        };
+
+        mark.url = mark.image.get('url');
+        let bbs = await marks_[key].get('bboxes').query().find();
+        for (let box of bbs) {
+          mark.bboxes.push({
+            x: box.get('x') || 0,
+            y: box.get('y') || 0,
+            w: box.get('w') || 0,
+            h: box.get('h') || 0,
+            t: box.get('t') || 0,
+            ref: box
+          });
+        }
+        marks.push(mark);
+      }
+      let pre = await job.get('pre').query().find();
+      for (let j of pre) {
+        let pMarks = await this.fetchMarks(j);
+        marks.push(...pMarks);
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    return marks;
   }
 
   ngAfterViewInit() {

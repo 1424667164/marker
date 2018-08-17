@@ -9,28 +9,28 @@
           新建标注项目
         </mat-panel-description>
       </mat-expansion-panel-header>
-
-      <mat-form-field class="add-field">
-        <input matInput placeholder="项目名称" [formControl]="nameFormControl" [errorStateMatcher]="matcher">
-        <mat-error *ngIf="nameFormControl.hasError('required')">
-          必须填写
-          <strong>项目名称</strong>
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field class="add-field">
-        <input matInput placeholder="项目概述" [formControl]="descriptionFormControl" [errorStateMatcher]="matcher">
-      </mat-form-field>
-      <button [disabled]="nameFormControl.invalid || descriptionFormControl.invalid" *ngIf="isAdmin" mat-stroked-button color="primary"
-        (click)="add()">
-        新建
-      </button>
+      <ng-template matExpansionPanelContent class="project-panel">
+        <mat-form-field class="add-field">
+          <input matInput placeholder="项目名称" [formControl]="nameFormControl" [errorStateMatcher]="matcher">
+          <mat-error *ngIf="nameFormControl.hasError('required')">
+            必须填写
+            <strong>项目名称</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="add-field">
+          <input matInput placeholder="项目概述" [formControl]="descriptionFormControl" [errorStateMatcher]="matcher">
+        </mat-form-field>
+        <button [disabled]="nameFormControl.invalid || descriptionFormControl.invalid" *ngIf="isAdmin" mat-stroked-button color="primary"
+          (click)="add()">
+          新建
+        </button>
+      </ng-template>
     </mat-expansion-panel>
   </div>
   <div class="markers">
     <mat-list>
       <h3 mat-subheader>标注项目</h3>
-      <mat-list-item *ngFor="let marker of markers" class="list-item project-item" (click)="select(marker.id, $event)" [matTooltip]="marker.description">
+      <mat-list-item *ngFor="let marker of markers" class="list-item project-item" (click)="selectProject(marker.id)">
         <mat-icon mat-list-icon class="icon-default">folder</mat-icon>
         <mat-icon *ngIf="isAdmin" (click)="delete(marker.id, $event)" mat-list-icon class="icon-hover">close</mat-icon>
         <h4 mat-line>
@@ -46,7 +46,7 @@
 <div class="jobs">
   <mat-list>
     <h3 mat-subheader>标注任务</h3>
-    <mat-list-item *ngFor="let job of jobs" class="list-item job-item" (click)="router.navigate(['/job/', job.id])" [matTooltip]="job.name">
+    <mat-list-item *ngFor="let job of jobs" class="list-item job-item" (click)="selectJob(job)">
       <mat-icon mat-list-icon class="icon-default">assignment</mat-icon>
       <h4 mat-line>
         {{job.name}}

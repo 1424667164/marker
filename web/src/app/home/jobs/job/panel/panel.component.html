@@ -1,0 +1,51 @@
+<span class="link right" [ngClass]="{'linked': job.next.length}"></span>
+<span class="link left" [ngClass]="{'linked': job.pre.length}"></span>
+<mat-card [ngClass]="{'current': job.current}">
+  <mat-card-title>
+    {{job.name}}
+  </mat-card-title>
+  <mat-card-content>
+    <label class="label-line">
+      <span>目标用户</span>
+      <span class="label-content">{{username}}</span>
+    </label>
+    <label class="label-line">
+      <span>标注图集</span>
+      <span class="label-content">
+        <span>已选择: {{job.marks.length}}</span>
+      </span>
+    </label>
+    <label class="label-line">
+      <span>commit</span>
+      <span class="label-content">{{job.commit}}</span>
+    </label>
+    <label class="label-line">
+      <span>rollback</span>
+      <span class="label-content">{{job.rollback}}</span>
+    </label>
+    <label class="label-line">
+      <span>状态</span>
+      <span class="label-content">{{job.active ? (job.commit > job.rollback ? '已完成' : '处理中...') : '等待中...'}}</span>
+    </label>
+    <label class="label-line" *ngIf="job.current || job.rollback < job.commit">
+      <span>操作</span>
+      <span class="label-content">
+        <button [disabled]="!job.canCommit" *ngIf="job.current && !(job.rollback < job.commit)" mat-icon-button class="generate" color="primary" (click)="commit()" matTooltip="提交标定结果, 标志着此任务完成">
+          <mat-icon>event_available</mat-icon>
+        </button>
+        <button [disabled]="thisJob.commit > thisJob.rollback" *ngIf="!job.current && job.rollback < job.commit" mat-icon-button class="generate" color="primary" (click)="rollback()" matTooltip="任务完成不合格，退回重做">
+          <mat-icon>event_busy</mat-icon>
+        </button>
+      </span>
+    </label>
+    <mat-expansion-panel class="logs-panel">
+      <mat-expansion-panel-header collapsedHeight="32px" expandedHeight="32px">
+        <mat-panel-title>
+          操作日志
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+  
+      <span class="log-line" *ngFor="let log of job.logs">{{log}}</span>
+    </mat-expansion-panel>
+  </mat-card-content>
+</mat-card>

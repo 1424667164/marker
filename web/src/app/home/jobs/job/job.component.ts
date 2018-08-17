@@ -36,11 +36,12 @@ declare interface StyleObject {
   templateUrl: './job.component.html',
   styleUrls: ['./job.component.scss']
 })
-export class JobComponent implements OnInit, AfterViewInit {
+export class JobVisualComponent implements OnInit, AfterViewInit {
   @ViewChild(LinkDirective)
   private linkCanvas: LinkDirective = null;
   private linking = false;
 
+  private thisJob: ParseObject = {};
   private project: ParseObject = {};
   private users = [];
   private jobs = [];
@@ -63,18 +64,26 @@ export class JobComponent implements OnInit, AfterViewInit {
     private userService: UserService
   ) { }
 
-  ngOnInit() {
-    this.userService.subscribe({}, (users) => {
-      this.users.splice(0, this.users.length);
-      for (let key in users) {
-        this.users.push({
-          name: users[key].get('username'),
-          ref: users[key]
-        });
+  async ngOnInit() {
+    // this.userService.subscribe({}, (users) => {
+    //   this.users.splice(0, this.users.length);
+    //   for (let key in users) {
+    //     this.users.push({
+    //       name: users[key].get('username'),
+    //       ref: users[key]
+    //     });
+    //   }
+    // });
+    // this.userService.reload();
+    this.thisJob = this.route.snapshot.data.job || {};
+    if (this.thisJob.get && this.thisJob.get('project')) {
+      try {
+        this.project = await this.thisJob.get('project').fetch();
+      } catch (e) {
+        console.error(e);
       }
-    });
-    this.userService.reload();
-    this.project = this.route.snapshot.data.project || {};
+    }
+    
     if (this.project.toPointer) {
       let whereString = this.jobService.subscribe({ project: this.project.toPointer() }, async (jobs) => {
         let jobs_ = [];
@@ -87,21 +96,26 @@ export class JobComponent implements OnInit, AfterViewInit {
             x: jobs[key].get('posX'),
             y: jobs[key].get('posY'),
             user: jobs[key].get('user'),
+            logs: jobs[key].get('logs'),
             pre: [],
             next: [],
             marks: await jobs[key].get('marks').query().find(),
+            current: jobs[key].id === this.thisJob.id,
             ref: jobs[key]
           });
         }
-        for(let job of jobs_) {
+        for (let job of jobs_) {
           let nexts = await job.ref.get('next').query().find();
-          for(let next of nexts) {
-            for(let j of jobs_) {
-              if(j.ref.id === next.id) {
+          for (let next of nexts) {
+            for (let j of jobs_) {
+              if (j.ref.id === next.id) {
                 job.next.push(j);
                 j.pre.push(job);
-                if(job.commit <= job.rollback) {
+                if (job.commit <= job.rollback) {
                   j.active = false;
+                }
+                if(j.current) {
+                  job.preJob = true;
                 }
                 break;
               }
@@ -125,49 +139,12 @@ export class JobComponent implements OnInit, AfterViewInit {
       this.artBoardStyle_.parentW = artBoard.parentElement.clientWidth;
       this.artBoardStyle_.parentH = artBoard.parentElement.clientHeight;
       this.viewport = {
-        x: this.artBoardStyle_.width / 2 - 0 - this.artBoardStyle_.parentW/2,
-        y: this.artBoardStyle_.width / 2 - 0 - this.artBoardStyle_.parentH/2,
+        x: this.artBoardStyle_.width / 2 - 0 - this.artBoardStyle_.parentW / 2,
+        y: this.artBoardStyle_.width / 2 - 0 - this.artBoardStyle_.parentH / 2,
         w: this.artBoardStyle_.parentW,
         h: this.artBoardStyle_.parentH
       }
     });
-  }
-
-  onContextMenu(evt: MouseEvent) {
-    this.contentMenuStyle.top = evt.offsetY - 32 + 'px';
-    this.contentMenuStyle.left = evt.offsetX - 32 + 'px';
-    this.contentMenuStyle.display = 'flex';
-    evt.preventDefault();
-  }
-  async addJob(evt) {
-    try {
-      let job = new Job();
-      job.set('name', 'default job');
-      job.set('project', this.project.toPointer());
-      job.set('posX', evt.layerX);
-      job.set('posY', evt.layerY);
-      await job.save();
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  startlink(evt) {
-    if (this.linkCanvas) {
-      this.linking = true;
-      this.linkCanvas.start(evt);
-    }
-  }
-  stoplink(evt) {
-    if (this.linkCanvas) {
-      this.linking = false;
-      this.linkCanvas.stop(evt);
-    }
-  }
-  movelink(evt) {
-    if (this.linkCanvas) {
-      this.linkCanvas.move(evt);
-    }
   }
 
   onMouseDown(evt: MouseEvent) {
@@ -193,9 +170,6 @@ export class JobComponent implements OnInit, AfterViewInit {
     }
   }
   onMouseMove(evt) {
-    if (this.linking && this.linkCanvas) {
-      return;
-    }
     if (this.mouseAction === MouseAction.Move) {
       window.captureEvents();
       this.artBoardStyle_.cursor = 'pointer';
@@ -249,8 +223,8 @@ export class JobComponent implements OnInit, AfterViewInit {
       [0, 0, 1]
     ]);
     this.viewport = {
-      x: this.artBoardStyle_.width / 2 - x / this.artBoardStyle_.scale - this.artBoardStyle_.parentW/2 / this.artBoardStyle_.scale,
-      y: this.artBoardStyle_.width / 2 - y / this.artBoardStyle_.scale - this.artBoardStyle_.parentH/2 / this.artBoardStyle_.scale,
+      x: this.artBoardStyle_.width / 2 - x / this.artBoardStyle_.scale - this.artBoardStyle_.parentW / 2 / this.artBoardStyle_.scale,
+      y: this.artBoardStyle_.width / 2 - y / this.artBoardStyle_.scale - this.artBoardStyle_.parentH / 2 / this.artBoardStyle_.scale,
       w: this.artBoardStyle_.parentW / this.artBoardStyle_.scale,
       h: this.artBoardStyle_.parentH / this.artBoardStyle_.scale
     }

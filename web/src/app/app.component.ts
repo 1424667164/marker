@@ -46,6 +46,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (w > 1024) {
       if (w / 2 > h) {
         w = 2 * h;
+      } else if (w / 1.4 > h) {
+        w = 1.4 * h;
       } else {
         w = 1024;
       }

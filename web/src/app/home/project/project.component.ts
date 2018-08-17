@@ -26,23 +26,15 @@ export class ProjectComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.id = this.route.snapshot.paramMap.get('id');
     this.route.url.subscribe(url => {
       if(this.route.children.length > 0) {
         this.currentMenu = this.route.snapshot.firstChild.data.index;
+        if(this.route.snapshot.firstChild.data.project) {
+          this.project = this.route.snapshot.firstChild.data.project;
+          this.publicService.setTitle(this.name);
+        }
       }
     });
-
-    this.id = this.route.snapshot.paramMap.get('id');
-    let inited = false;
-    this.projectService.subscribe({}, (() => {
-      this.project = this.projectService.projects[this.id] || {};
-      Promise.resolve().then(() => {
-        if (!inited && this.project.id) {
-          this.publicService.setTitle(this.name);
-          inited = true;
-        }
-      });
-    }).bind(this));
-    this.projectService.reload();
   }
 }

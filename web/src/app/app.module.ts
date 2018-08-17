@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -33,11 +34,15 @@ import { JobComponent } from './home/project/job/job.component';
 import { JobsComponent } from './home/jobs/jobs.component';
 import { MarkComponent } from './home/jobs/mark/mark.component';
 import { ResultComponent } from './home/jobs/result/result.component';
+import { JobVisualComponent } from './home/jobs/job/job.component';
+import { PanelVisualComponent } from './home/jobs/job//panel/panel.component';
 import { AdminDirective } from './directives/admin.directive';
 import { PanelComponent } from './home/project/job/panel/panel.component';
 import { LinkDirective } from './directives/link.directive';
 import { ConformComponent } from './home/dialog/conform/conform.component';
 import { SetmarksComponent } from './home/dialog/setmarks/setmarks.component';
+
+import { CustomReuseStrategy } from './services/public.service';
 
 
 @NgModule({
@@ -51,6 +56,8 @@ import { SetmarksComponent } from './home/dialog/setmarks/setmarks.component';
     MarkComponent,
     SettingComponent,
     ResultComponent,
+    JobVisualComponent,
+    PanelVisualComponent,
     JobComponent,
     AdminDirective,
     PanelComponent,
@@ -82,7 +89,7 @@ import { SetmarksComponent } from './home/dialog/setmarks/setmarks.component';
     AppRoutingModule
   ],
   entryComponents: [SetmarksComponent, ConformComponent],
-  providers: [],
+  providers: [{provide: RouteReuseStrategy, useClass: CustomReuseStrategy}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

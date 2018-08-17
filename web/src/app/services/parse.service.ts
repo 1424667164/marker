@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import * as Parse_ from 'parse';
 
 const APP_ID = '123456';
@@ -121,6 +121,7 @@ export declare class ParseObject {
   remove?(attr: string, item: any);
   toPointer?();
   fetch?();
+  increment?(attr: string);
 }
 
 
@@ -302,12 +303,13 @@ export abstract class ParseClass implements OnDestroy {
     }
   }
 
-  reload(whereString = '{}') {
+  reload(whereString: any = '{}') {
+    return;
     this.subjects[whereString] && this.subjects[whereString].next(this.objects[whereString]);
   }
-  subscribe(where = {}, cb = null) {
+  subscribe(where = {}, cb = null): Subscription {
     if (!cb) {
-      return '';
+      return new Subscription();
     }
     let whereString = JSON.stringify(where);
     if (!this.subjects[whereString]) {
@@ -315,8 +317,10 @@ export abstract class ParseClass implements OnDestroy {
       this.reset(where);
     }
     this.subscription[whereString] = this.subscription[whereString] || [];
-    this.subscription[whereString].push(this.subjects[whereString].asObservable().subscribe(cb));
-    return whereString;
+    let subscription = this.subjects[whereString].asObservable().subscribe(cb);
+    this.subscription[whereString].push(subscription);
+    this.subjects[whereString].next(this.objects[whereString]);
+    return subscription;
   }
 
   ngOnDestroy() {

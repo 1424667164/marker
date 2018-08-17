@@ -38,6 +38,9 @@
             .add-field {
                 margin-right: 12px !important;
             }
+            ::ng-deep .mat-expansion-panel-body {
+                display: flex;
+            }
         }
     }
     .markers {
